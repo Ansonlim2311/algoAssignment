@@ -63,7 +63,7 @@ public class quick_sort_step{
         return list.stream().mapToInt(i -> i).toArray(); //convert string to integers and place in array, and put in an arrayList called list in order to compare number.
     }
 
-    public static void quickSort(){
+    public static void quickSort(){ //
 
     }
 
