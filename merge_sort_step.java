@@ -34,7 +34,7 @@ public class merge_sort_step {
         scanner.close();
     }
 
-    public static int[] readCSVRange(String filename, int start, int end) {
+    public static int[] readCSVRange(String filename, int start, int end) { //read range 
         List<Integer> list = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
