@@ -20,6 +20,7 @@ public class merge_sort_step {
 
         int[] numbers = readCSVRange(inputFile, startRow, endRow);
         if (numbers == null) {
+            System.err.println("Error: Unable to read dataset.");
             scanner.close();
             return;
         }
@@ -68,6 +69,7 @@ public class merge_sort_step {
     }
 
     public static void merge(int S[], int left, int mid, int right) {
+        String log;
         LinkedList<Integer> L = new LinkedList<>();
         for (int i = 0; i < mid - left + 1; i++)
             L.add(S[left + i]);
@@ -94,7 +96,11 @@ public class merge_sort_step {
             S[k++] = R.removeFirst();
         }
 
-        logSteps.add("Merged [" + left + " to " + right + "]: " + Arrays.toString(Arrays.copyOfRange(S, left, right + 1)));
+        log = "Merged [" + left + " to " + right + "]: ";
+        for (int i = left; i <= right; i++) {
+            log = log + S[i] + " ";
+        }
+        logSteps.add(log);
     }
 
     public static void writeStepsToFile(String filename) {
