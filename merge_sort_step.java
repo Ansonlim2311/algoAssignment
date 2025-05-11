@@ -7,7 +7,7 @@ public class merge_sort_step {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter filename: ");
+        System.out.print("Enter dataset filename: ");
         String inputFile = scanner.nextLine();
 
         System.out.print("Enter start row: ");
@@ -20,6 +20,7 @@ public class merge_sort_step {
 
         int[] numbers = readCSVRange(inputFile, startRow, endRow);
         if (numbers == null) {
+            scanner.close();
             return;
         }
 
@@ -29,20 +30,22 @@ public class merge_sort_step {
 
         writeStepsToFile(outputFile);
         System.out.println("Merge sort steps written to " + outputFile);
+
+        scanner.close();
     }
 
-    // Read specified rows from the CSV file
     public static int[] readCSVRange(String filename, int start, int end) {
         List<Integer> list = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
-            int row = 0;
-            while ((line = br.readLine()) != null) {
-                row++;
-                if (row < start) continue;
-                if (row > end) break;
-                String[] parts = line.split(",", 2);
-                list.add(Integer.parseInt(parts[0])); // only use the integer field
+            for (int row = 0; (line = br.readLine()) != null; row++) {
+                if (row < start) {
+                    continue;
+                }
+                if (row > end) { 
+                    break;
+                }
+                list.add(Integer.valueOf(line.split(",", 2)[0]));
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
@@ -73,32 +76,31 @@ public class merge_sort_step {
         for (int j = 0; j < right - mid; j++)
             R.add(S[mid + 1 + j]);
 
-        int i = left;
+        int k = left;
 
         while (!L.isEmpty() && !R.isEmpty()) {
-            if (L.peek() <= R.peek()) {
-                S[i++] = L.poll();
+            if (L.getFirst() <= R.getFirst()) {
+                S[k++] = L.removeFirst();
             } else {
-                S[i++] = R.poll();
+                S[k++] = R.removeFirst();
             }
         }
 
         while (!L.isEmpty()) {
-            S[i++] = L.poll();
+            S[k++] = L.removeFirst();
         }
 
         while (!R.isEmpty()) {
-            S[i++] = R.poll();
+            S[k++] = R.removeFirst();
         }
 
-        // Log this merge step
         logSteps.add("Merged [" + left + " to " + right + "]: " + Arrays.toString(Arrays.copyOfRange(S, left, right + 1)));
     }
 
     public static void writeStepsToFile(String filename) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
-            for (String line : logSteps) {
-                bw.write(line);
+            for (int i = 0; i < logSteps.size(); i++) {
+                bw.write(logSteps.get(i));
                 bw.newLine();
             }
         } catch (IOException e) {

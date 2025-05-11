@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class dataset_generator {
-    static final int maxValue = 1_000_000_000;
+    static final int maxValue = 1000000000;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
