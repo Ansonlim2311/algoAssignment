@@ -17,7 +17,7 @@ public class dataset_generator {
 
         // System.out.print("Enter the filename to save the dataset (e.g. dataset_n.csv): ");
         // String filename = scanner.nextLine();
-        String filename = "dataset_" + size + ".csv"
+        String filename = "dataset_" + size + ".csv";
 
         generateDataset(filename, size);
     }
