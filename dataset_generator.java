@@ -20,6 +20,8 @@ public class dataset_generator {
         String filename = "dataset_" + size + ".csv";
 
         generateDataset(filename, size);
+
+        scanner.close();
     }
 
     public static void generateDataset(String filename, int size) {
