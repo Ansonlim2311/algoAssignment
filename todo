@@ -1,0 +1,30 @@
+Left With
+1.merge_sort (java + c++)
+2.quick_sort (java + c++)
+3.binary_search (java + c++)
+4.binary_search_step (c++)
+
+Your tasks:
+1. Perform a comparative analysis on the following two sorting algorithms.
+a. Merge-sort
+b. Quick-sort (last element as pivot)
+
+2. Perform an analysis on the best, average, and worst case for binary search.
+
+3. The analysis shall cover the following:
+a. Theoretical analysis and experiment study
+b. Time and space complexities
+
+4. Using a sorting or searching library is not allowed. Using a data structure that performs sorting internally is also not allowed, e.g. TreeSet, TreeMap, or
+PriorityQueue in Java. The safe data structures to use are array and list (array list or linked list), remember not to use their built-in sorting or searching
+function.
+
+6. For the experiment study:
+a. The running time captured should not include the time for I/O (reading input or printing output).
+b. 10 or more input sizes should be captured.
+c. Each member should run all sorting and searching algorithms using at least one language and include the results in the presentation slide.
+7. Conclude the following:
+
+a. Findings on sorting and searching algorithms in same language and different languages on same and different hardware.
+b. The best sorting algorithm for the array based AVL implementation.
+c. Compare theoretically the implementation of AVL using an array vs linked structure
