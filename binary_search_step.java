@@ -1,0 +1,113 @@
+import java.io.*;
+import java.util.*;
+
+public class binary_search_step {
+    static List<String> logSteps = new ArrayList<>();
+
+    static class RowData {
+        int number;
+        String text;
+        int index;
+
+        RowData(int number, String text, int index) {
+            this.number = number;
+            this.text = text;
+            this.index = index;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner (System.in);
+
+        System.out.print("Enter DataSet Filename: ");
+        String fileName = scanner.nextLine();
+
+        System.out.print("Enter Target Value: ");
+        int targetValue = scanner.nextInt();
+
+        String outputFile = "binary_search_step_" + targetValue + ".txt";
+
+        List<RowData> list = readCSV(fileName);
+        if (list == null) {
+            System.err.println("Error: Unable to read dataset.");
+            scanner.close();
+            return;
+        }
+
+        bubbleSort(list);
+        binarySearch(list, targetValue);
+
+        writeStepsToFile(outputFile);
+        System.out.println("Binary search steps written to " + outputFile);
+
+        scanner.close();
+    }
+
+    public static List<RowData> readCSV(String fileName) {
+        List<RowData> list = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            for (int index = 1; ((line = br.readLine()) != null); index++) {
+                String[] parts = line.split(",", 2);
+                if (parts.length == 2) {
+                    int number = Integer.parseInt(parts[0].trim());
+                    String text = parts[1];
+                    list.add(new RowData(number, text, index));
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+            return null;
+        }
+        return list;
+    }
+
+    public static void bubbleSort(List<RowData> list) {
+        int n = list.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (list.get(j).number >  list.get(j + 1).number) {
+                    RowData temp = list.get(j);
+                    list.set(j, list.get(j + 1));
+                    list.set(j + 1, temp);
+                }
+            }
+        }
+        for (int i = 0; i < list.size(); i++) {
+            list.get(i).index = i + 1;
+        }
+    }
+
+    public static void binarySearch(List<RowData> list, int targetValue) {
+        int lowIndex = 0;
+        int highIndex = list.size() - 1;
+
+        while (lowIndex <= highIndex) {
+            int midIndex = (lowIndex + highIndex) / 2;
+            RowData midData = list.get(midIndex);
+
+            logSteps.add(midData.index + ":" + midData.number + "/" + midData.text);
+
+            if (midData.number == targetValue) {
+                return;
+            }
+            else if (midData.number < targetValue) {
+                lowIndex = midIndex + 1;
+            }
+            else if (midData.number > targetValue) {
+                highIndex = midIndex - 1;
+            }
+        }
+    }
+
+    public static void writeStepsToFile(String outputFile) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
+            for (int i = 0; i < logSteps.size(); i++) {
+                bw.write(logSteps.get(i));
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing output file: " + e.getMessage());
+        }
+    }
+}
