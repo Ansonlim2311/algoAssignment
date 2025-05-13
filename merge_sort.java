@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class merge_sort_step {
+public class merge_sort {
     static List<String> logSteps = new ArrayList<>();
 
     public static void main(String[] args) {
