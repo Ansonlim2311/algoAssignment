@@ -4,7 +4,18 @@ import java.util.*;
 public class merge_sort_step {
     static List<String> logSteps = new ArrayList<>();
 
+    public static class RowData {
+        int number;
+        String text;
+
+        RowData(int number, String text) {
+            this.number = number;
+            this.text = text;
+        }
+    }
+
     public static void main(String[] args) {
+        String log;
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter dataset filename: ");
@@ -18,16 +29,24 @@ public class merge_sort_step {
         
         String outputFile = "merge_sort_step_" + startRow + "_" + endRow + ".txt";
 
-        int[] numbers = readCSVRange(inputFile, startRow, endRow);
+        RowData[] numbers = readCSVRange(inputFile, startRow, endRow);
         if (numbers == null) {
             System.err.println("Error: Unable to read dataset.");
             scanner.close();
             return;
         }
 
-        logSteps.add("Before MergeSort: " + Arrays.toString(numbers));
+        log = "[";
+        for (int i = 0; i < numbers.length; i++) {
+            log = log + numbers[i].number + "/" + numbers[i].text;
+            if (i != numbers.length - 1) {
+                log = log + ", ";
+            }
+        }
+        log = log + "]";
+        logSteps.add(log);
+        
         mergeSort(numbers);
-        logSteps.add("After MergeSort:  " + Arrays.toString(numbers));
 
         writeStepsToFile(outputFile);
         System.out.println("Merge sort steps written to " + outputFile);
@@ -35,35 +54,36 @@ public class merge_sort_step {
         scanner.close();
     }
 
-    public static int[] readCSVRange(String filename, int start, int end) { //read range 
-        List<Integer> list = new ArrayList<>();
+    public static RowData[] readCSVRange(String filename, int start, int end) { //read range 
+        List<RowData> list = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
-            for (int row = 0; (line = br.readLine()) != null; row++) {
-                if (row < start) {
+            for (int index = 1; (line = br.readLine()) != null; index++) {
+                if (index < start) {
                     continue;
                 }
-                if (row > end) { 
+                if (index > end) { 
                     break;
                 }
-                list.add(Integer.valueOf(line.split(",", 2)[0]));
+                String[] parts = line.split(",", 2);
+                if (parts.length == 2) {
+                    int number = Integer.parseInt(parts[0].trim());
+                    String text = parts[1];
+                    list.add(new RowData(number, text));
+                }
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
             return null;
         }
-        int[] array = new int[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            array[i] = list.get(i);
-        }
-        return array;
+        return list.toArray(new RowData[0]);
     }
 
-    public static void mergeSort(int[] S) {
+    public static void mergeSort(RowData[] S) {
         mergeSort(S, 0, S.length - 1);
     }
 
-    public static void mergeSort(int[] S, int left, int right) {
+    public static void mergeSort(RowData[] S, int left, int right) {
         if (left < right) {
             int mid = (left + right) / 2;
             mergeSort(S, left, mid);
@@ -72,20 +92,20 @@ public class merge_sort_step {
         }
     }
 
-    public static void merge(int S[], int left, int mid, int right) {
+    public static void merge(RowData[] S, int left, int mid, int right) {
         String log;
-        LinkedList<Integer> L = new LinkedList<>();
+        LinkedList<RowData> L = new LinkedList<>();
         for (int i = 0; i < mid - left + 1; i++)
             L.add(S[left + i]);
 
-        LinkedList<Integer> R = new LinkedList<>();
+        LinkedList<RowData> R = new LinkedList<>();
         for (int j = 0; j < right - mid; j++)
             R.add(S[mid + 1 + j]);
 
         int k = left;
 
         while (!L.isEmpty() && !R.isEmpty()) {
-            if (L.getFirst() <= R.getFirst()) {
+            if (L.getFirst().number <= R.getFirst().number) {
                 S[k++] = L.removeFirst();
             } else {
                 S[k++] = R.removeFirst();
@@ -100,10 +120,14 @@ public class merge_sort_step {
             S[k++] = R.removeFirst();
         }
 
-        log = "Merged [" + left + " to " + right + "]: ";
-        for (int i = left; i <= right; i++) {
-            log = log + S[i] + " ";
+        log = "[";
+        for (int i = 0; i < S.length; i++) {
+            log = log + S[i].number + "/" + S[i].text;
+            if (i != S.length - 1) {
+                log = log + ", ";
+            }
         }
+        log = log + "]";
         logSteps.add(log);
     }
 
