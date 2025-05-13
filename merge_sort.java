@@ -10,13 +10,14 @@ public class merge_sort {
         System.out.print("Enter dataset filename: ");
         String inputFile = scanner.nextLine();
 
-        System.out.print("Enter start row: ");
-        int startRow = scanner.nextInt();
+        // System.out.print("Enter start row: ");
+        int startRow = 1;
 
-        System.out.print("Enter end row: ");
-        int endRow = scanner.nextInt();
+        // System.out.print("Enter end row: ");
+        int endRow = getRowCount(inputFile);
+        // System.out.print(endRow);
         
-        String outputFile = "merge_sort_step_" + startRow + "_" + endRow + ".txt";
+        String outputFile = "merge_sort " + startRow + "_" + endRow + ".txt";
 
         int[] numbers = readCSVRange(inputFile, startRow, endRow);
         if (numbers == null) {
@@ -24,6 +25,7 @@ public class merge_sort {
             scanner.close();
             return;
         }
+
 
         logSteps.add("Before MergeSort: " + Arrays.toString(numbers));
         mergeSort(numbers);
@@ -34,6 +36,19 @@ public class merge_sort {
 
         scanner.close();
     }
+
+    public static int getRowCount(String filename) {
+    int rowCount = 0;
+    try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        while (br.readLine() != null) {
+            rowCount++;
+        }
+    } catch (IOException e) {
+        System.err.println("Error reading file: " + e.getMessage());
+    }
+    return rowCount;
+    }
+
 
     public static int[] readCSVRange(String filename, int start, int end) { //read range 
         List<Integer> list = new ArrayList<>();
