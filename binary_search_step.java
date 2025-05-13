@@ -34,7 +34,7 @@ public class binary_search_step {
             return;
         }
 
-        bubbleSort(list);
+        // bubbleSort(list);
         binarySearch(list, targetValue);
 
         writeStepsToFile(outputFile);
@@ -62,28 +62,28 @@ public class binary_search_step {
         return list;
     }
 
-    public static void bubbleSort(List<RowData> list) {
-        int n = list.size();
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                if (list.get(j).number >  list.get(j + 1).number) {
-                    RowData temp = list.get(j);
-                    list.set(j, list.get(j + 1));
-                    list.set(j + 1, temp);
-                }
-            }
-        }
-        for (int i = 0; i < list.size(); i++) {
-            list.get(i).index = i + 1;
-        }
-    }
+    // public static void bubbleSort(List<RowData> list) {
+    //     int n = list.size();
+    //     for (int i = 0; i < n - 1; i++) {
+    //         for (int j = 0; j < n - i - 1; j++) {
+    //             if (list.get(j).number >  list.get(j + 1).number) {
+    //                 RowData temp = list.get(j);
+    //                 list.set(j, list.get(j + 1));
+    //                 list.set(j + 1, temp);
+    //             }
+    //         }
+    //     }
+    //     for (int i = 0; i < list.size(); i++) {
+    //         list.get(i).index = i + 1;
+    //     }
+    // }
 
     public static void binarySearch(List<RowData> list, int targetValue) {
-        int lowIndex = 0;
-        int highIndex = list.size() - 1;
+        int leftIndex = 0;
+        int rightIndex = list.size() - 1;
 
-        while (lowIndex <= highIndex) {
-            int midIndex = (lowIndex + highIndex) / 2;
+        while (leftIndex <= rightIndex) {
+            int midIndex = (leftIndex + rightIndex) / 2;
             RowData midData = list.get(midIndex);
 
             logSteps.add(midData.index + ":" + midData.number + "/" + midData.text);
@@ -92,10 +92,10 @@ public class binary_search_step {
                 return;
             }
             else if (midData.number < targetValue) {
-                lowIndex = midIndex + 1;
+                leftIndex = midIndex + 1;
             }
             else if (midData.number > targetValue) {
-                highIndex = midIndex - 1;
+                rightIndex = midIndex - 1;
             }
         }
     }
