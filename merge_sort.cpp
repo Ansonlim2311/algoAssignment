@@ -1,9 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <sstream>
 #include <string>
-#include <algorithm>
 #include <stdexcept>
 #include <list>
 
@@ -92,6 +90,23 @@ void writeStepsToFile(const string& filename) {
     file.close();
 }
 
+int getRowCount(const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        throw runtime_error("Error opening file: " + filename);
+    }
+
+    string line;
+    int count = 0;
+    while (getline(file, line)) {
+        if (!line.empty()) {
+            count++;
+        }
+    }
+    file.close();
+    return count;
+}
+
 int main() {
     string inputFile, log;
     int startRow, endRow;
@@ -99,13 +114,15 @@ int main() {
     cout << "Enter dataset filename: ";
     cin >> inputFile;
 
-    cout << "Enter start row: ";
-    cin >> startRow;
+    startRow = 1;
+    // cout << "Enter start row: ";
+    // cin >> startRow;
 
-    cout << "Enter end row: ";
-    cin >> endRow;
+    // cout << "Enter end row: ";
+    // cin >> endRow;
+    endRow = getRowCount(inputFile);
 
-    string outputFile = "merge_sort_step_" + to_string(startRow) + "_" + to_string(endRow) + ".txt";
+    string outputFile = "merge_sort " + to_string(startRow) + "_" + to_string(endRow) + ".txt";
 
     vector<int> numbers = readCSVRange(inputFile, startRow, endRow);
     if (numbers.empty()) {
