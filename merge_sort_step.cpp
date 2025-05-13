@@ -9,8 +9,18 @@ using namespace std;
 
 vector<string> logSteps;
 
-vector<int> readCSVRange(const string& filename, int start, int end) {
-    vector<int> numbers;
+struct RowData {
+    int number;
+    string text;
+
+    RowData(int number, string text) {
+        this->number = number;
+        this->text = text;
+    }
+};
+
+vector<RowData> readCSVRange(const string& filename, int start, int end) {
+    vector<RowData> numbers;
     ifstream file(filename);
     
     if (!file.is_open()) {
@@ -25,15 +35,22 @@ vector<int> readCSVRange(const string& filename, int start, int end) {
         if (row > end) { 
             break;
         }
-
-        numbers.push_back(stoi(line.substr(0, line.find(','))));
+        string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
+        if (parts[0].empty() || parts[1].empty()) {
+            throw runtime_error("Error parsing line: " + line);
+        }
+        else {
+            int number = stoi(parts[0]);
+            string text = parts[1];
+            numbers.push_back(RowData(number, text));
+        }
     }
     file.close();
     return numbers;
 }
 
-void merge(vector<int>& S, int left, int mid, int right) {
-    list<int> L, R;
+void merge(vector<RowData>& S, int left, int mid, int right) {
+    list<RowData> L, R;
     for (int i = left; i <= mid; i++) {
         L.push_back(S[i]);
     }
@@ -43,7 +60,7 @@ void merge(vector<int>& S, int left, int mid, int right) {
 
     int k = left;
     while (!L.empty() && !R.empty()) {
-        if (L.front() <= R.front()) {
+        if (L.front().number <= R.front().number) {
             S[k++] = L.front();
             L.pop_front();
         }
@@ -62,14 +79,18 @@ void merge(vector<int>& S, int left, int mid, int right) {
         R.pop_front();
     }
 
-    string log = "Merged [" + to_string(left) + " to " + to_string(right) + "]: ";
-    for (int i = left; i <= right; i++) {
-        log = log + to_string(S[i]) + " ";
+    string log = "[";
+    for (int i = 0; i < S.size(); i++) {
+        log = log + to_string(S[i].number) + "/" + S[i].text;
+        if (i < S.size() - 1) {
+            log += ", ";
+        }
     }
+    log = log + "]";
     logSteps.push_back(log);
 }
 
-void mergeSort(vector<int>& S, int left, int right) {
+void mergeSort(vector<RowData>& S, int left, int right) {
     if (left < right) {
         int mid = (left + right) / 2;
         mergeSort(S, left, mid);
@@ -105,24 +126,32 @@ int main() {
 
     string outputFile = "merge_sort_step_" + to_string(startRow) + "_" + to_string(endRow) + ".txt";
 
-    vector<int> numbers = readCSVRange(inputFile, startRow, endRow);
+    vector<RowData> numbers = readCSVRange(inputFile, startRow, endRow);
     if (numbers.empty()) {
         throw runtime_error("Error: The dataset is empty or could not be read.");
     }
 
-    log = "Before MergeSort: ";
+    log = "[";
     for (int i = 0; i < numbers.size(); i++) {
-        log = log + to_string(numbers[i]) + " ";
+        log = log + to_string(numbers[i].number) + "/" + numbers[i].text;
+        if (i < numbers.size() - 1) {
+            log += ", ";
+        }
     }
+    log = log + "]";
     logSteps.push_back(log);
 
     mergeSort(numbers, 0, numbers.size() - 1);
 
-    log = "After MergeSort: ";
-    for (int i = 0; i < numbers.size(); i++) {
-        log = log + to_string(numbers[i]) + " ";
-    }
-    logSteps.push_back(log);
+    // log = "[";
+    // for (int i = 0; i < numbers.size(); i++) {
+    //     log = log + to_string(numbers[i].number) + "/" + numbers[i].text;
+    //     if (i < numbers.size() - 1) {
+    //         log += ", ";
+    //     }
+    // }
+    // log = log + "]";
+    // logSteps.push_back(log);
 
     writeStepsToFile(outputFile);
 

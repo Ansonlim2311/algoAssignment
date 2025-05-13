@@ -21,20 +21,14 @@ public class merge_sort {
         System.out.print("Enter dataset filename: ");
         String inputFile = scanner.nextLine();
 
-        // System.out.print("Enter start row: ");
-        int startRow = 1;
-
-        // System.out.print("Enter end row: ");
-        int endRow = getRowCount(inputFile);
-        
-        String outputFile = "merge_sort " + startRow + "_" + endRow + ".txt";
-
-        RowData[] numbers = readCSVRange(inputFile, startRow, endRow);
+        RowData[] numbers = readCSVRange(inputFile);
         if (numbers == null) {
             System.err.println("Error: Unable to read dataset.");
             scanner.close();
             return;
         }
+
+        String outputFile = "merge_sort " + numbers.length + ".txt";
 
         log = "[";
         for (int i = 0; i < numbers.length; i++) {
@@ -54,30 +48,11 @@ public class merge_sort {
         scanner.close();
     }
 
-    public static int getRowCount(String filename) {
-    int rowCount = 0;
-    try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-        while (br.readLine() != null) {
-            rowCount++;
-        }
-    } catch (IOException e) {
-        System.err.println("Error reading file: " + e.getMessage());
-    }
-    return rowCount;
-    }
-
-
-    public static RowData[] readCSVRange(String filename, int start, int end) { //read range 
+    public static RowData[] readCSVRange(String filename) {
         List<RowData> list = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
-            for (int index = 1; (line = br.readLine()) != null; index++) {
-                if (index < start) {
-                    continue;
-                }
-                if (index > end) { 
-                    break;
-                }
+            while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",", 2);
                 if (parts.length == 2) {
                     int number = Integer.parseInt(parts[0].trim());
