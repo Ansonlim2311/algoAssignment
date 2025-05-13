@@ -52,15 +52,15 @@ vector<RowData> readCSVRange(const string& filename, int start, int end) {
 void merge(vector<RowData>& S, int left, int mid, int right) {
     list<RowData> L, R;
     for (int i = left; i <= mid; i++) {
-        L.push_back(S[i].number);
+        L.push_back(S[i]);
     }
     for (int i = mid + 1; i <= right; i++) {
-        R.push_back(S[i].number);
+        R.push_back(S[i]);
     }
 
     int k = left;
     while (!L.empty() && !R.empty()) {
-        if (L.front() <= R.front()) {
+        if (L.front().number <= R.front().number) {
             S[k++] = L.front();
             L.pop_front();
         }
@@ -79,14 +79,18 @@ void merge(vector<RowData>& S, int left, int mid, int right) {
         R.pop_front();
     }
 
-    string log = "Merged [" + to_string(left) + " to " + to_string(right) + "]: ";
-    for (int i = left; i <= right; i++) {
-        log = log + to_string(S[i]) + " ";
+    string log = "[";
+    for (int i = 0; i < S.size(); i++) {
+        log = log + to_string(S[i].number) + "/" + S[i].text;
+        if (i < S.size() - 1) {
+            log += ", ";
+        }
     }
+    log = log + "]";
     logSteps.push_back(log);
 }
 
-void mergeSort(vector<int>& S, int left, int right) {
+void mergeSort(vector<RowData>& S, int left, int right) {
     if (left < right) {
         int mid = (left + right) / 2;
         mergeSort(S, left, mid);
@@ -127,19 +131,27 @@ int main() {
         throw runtime_error("Error: The dataset is empty or could not be read.");
     }
 
-    log = "Before MergeSort: ";
+    log = "[";
     for (int i = 0; i < numbers.size(); i++) {
-        log = log + to_string(numbers[i]) + " ";
+        log = log + to_string(numbers[i].number) + "/" + numbers[i].text;
+        if (i < numbers.size() - 1) {
+            log += ", ";
+        }
     }
+    log = log + "]";
     logSteps.push_back(log);
 
     mergeSort(numbers, 0, numbers.size() - 1);
 
-    log = "After MergeSort: ";
-    for (int i = 0; i < numbers.size(); i++) {
-        log = log + to_string(numbers[i]) + " ";
-    }
-    logSteps.push_back(log);
+    // log = "[";
+    // for (int i = 0; i < numbers.size(); i++) {
+    //     log = log + to_string(numbers[i].number) + "/" + numbers[i].text;
+    //     if (i < numbers.size() - 1) {
+    //         log += ", ";
+    //     }
+    // }
+    // log = log + "]";
+    // logSteps.push_back(log);
 
     writeStepsToFile(outputFile);
 
