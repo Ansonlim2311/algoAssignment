@@ -9,8 +9,18 @@ using namespace std;
 
 vector<string> logSteps;
 
-vector<int> readCSVRange(const string& filename, int start, int end) {
-    vector<int> numbers;
+struct RowData {
+    int number;
+    string text;
+
+    RowData(int number, string text) {
+        this->number = number;
+        this->text = text;
+    }
+};
+
+vector<RowData> readCSVRange(const string& filename, int start, int end) {
+    vector<RowData> numbers;
     ifstream file(filename);
     
     if (!file.is_open()) {
@@ -25,20 +35,27 @@ vector<int> readCSVRange(const string& filename, int start, int end) {
         if (row > end) { 
             break;
         }
-
-        numbers.push_back(stoi(line.substr(0, line.find(','))));
+        string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
+        if (parts[0].empty() || parts[1].empty()) {
+            throw runtime_error("Error parsing line: " + line);
+        }
+        else {
+            int number = stoi(parts[0]);
+            string text = parts[1];
+            numbers.push_back(RowData(number, text));
+        }
     }
     file.close();
     return numbers;
 }
 
-void merge(vector<int>& S, int left, int mid, int right) {
-    list<int> L, R;
+void merge(vector<RowData>& S, int left, int mid, int right) {
+    list<RowData> L, R;
     for (int i = left; i <= mid; i++) {
-        L.push_back(S[i]);
+        L.push_back(S[i].number);
     }
     for (int i = mid + 1; i <= right; i++) {
-        R.push_back(S[i]);
+        R.push_back(S[i].number);
     }
 
     int k = left;
@@ -105,7 +122,7 @@ int main() {
 
     string outputFile = "merge_sort_step_" + to_string(startRow) + "_" + to_string(endRow) + ".txt";
 
-    vector<int> numbers = readCSVRange(inputFile, startRow, endRow);
+    vector<RowData> numbers = readCSVRange(inputFile, startRow, endRow);
     if (numbers.empty()) {
         throw runtime_error("Error: The dataset is empty or could not be read.");
     }
