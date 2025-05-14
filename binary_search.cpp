@@ -89,10 +89,6 @@ void writeStepsToFile(const string& filename, chrono::nanoseconds bestTime, chro
         throw runtime_error("Error writing to file: " + filename);
     }
 
-    // for (int i = 0; i < logSteps.size(); i++) {
-    //     file << logSteps[i] << + " " << endl;
-    // }
-
     file << "Best Time: " << bestTime.count() << " ns" << endl;
     file << "Worst Time: " << worstTime.count() << " ns" << endl;
 
@@ -101,7 +97,7 @@ void writeStepsToFile(const string& filename, chrono::nanoseconds bestTime, chro
 
 int main() {
     string filename;
-    int target, n;
+    int target, n, midIndex;
 
     cout << "Enter dataset filename: ";
     cin >> filename;
@@ -116,6 +112,7 @@ int main() {
     n = list.size();
     bubbleSort(list);
 
+    
     target = list[n/2].number;
     auto start = chrono::high_resolution_clock::now();
     binarySearch(list, target);

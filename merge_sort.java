@@ -15,7 +15,6 @@ public class merge_sort {
     }
 
     public static void main(String[] args) {
-        String log;
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter dataset filename: ");
@@ -28,17 +27,7 @@ public class merge_sort {
             return;
         }
 
-        String outputFile = "merge_sort " + numbers.length + ".txt";
-
-        log = "[";
-        for (int i = 0; i < numbers.length; i++) {
-            log = log + numbers[i].number + "/" + numbers[i].text;
-            if (i != numbers.length - 1) {
-                log = log + ", ";
-            }
-        }
-        log = log + "]";
-        logSteps.add(log);
+        String outputFile = "merge_sort_" + numbers.length + ".csv";
         
         mergeSort(numbers);
 
@@ -108,22 +97,17 @@ public class merge_sort {
             S[k++] = R.removeFirst();
         }
 
-        log = "[";
+        log = "";
         for (int i = 0; i < S.length; i++) {
-            log = log + S[i].number + "/" + S[i].text;
-            if (i != S.length - 1) {
-                log = log + ", ";
-            }
+            log = log + S[i].number + "/" + S[i].text + "\n";
         }
-        log = log + "]";
         logSteps.add(log);
     }
 
     public static void writeStepsToFile(String filename) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
-            for (int i = 0; i < logSteps.size(); i++) {
-                bw.write(logSteps.get(i));
-                bw.newLine();
+            if (!logSteps.isEmpty()) {
+                bw.write(logSteps.get(logSteps.size() - 1));
             }
         } catch (IOException e) {
             System.err.println("Error writing output file: " + e.getMessage());
