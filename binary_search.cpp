@@ -46,22 +46,6 @@ vector<RowData> readCSV(const string& filename) {
     return list;
 }
 
-void bubbleSort(vector<RowData>& list) {
-    int n = list.size();
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n- i - 1; j++) {
-            if (list.at(j).number > list.at(j + 1).number) {
-                RowData temp = list.at(j);
-                list.at(j) = list.at(j + 1);
-                list.at(j + 1) = temp;
-            }
-        }
-        for (int i = 0; i < list.size(); i++) {
-            list.at(i).index = i + 1;
-        }
-    }
-}
-
 void binarySearch(vector<RowData> list, int targetValue) {
     int leftIndex = 0;
     int rightIndex = list.size() - 1;
@@ -97,7 +81,7 @@ void writeStepsToFile(const string& filename, chrono::nanoseconds bestTime, chro
 
 int main() {
     string filename;
-    int target, n, midIndex;
+    int bestTarget, worstTarget, n, midIndex;
 
     cout << "Enter dataset filename: ";
     cin >> filename;
@@ -107,21 +91,22 @@ int main() {
         throw runtime_error("Error: No data found in the file.");
     }
 
+    n = list.size();
+
+    bestTarget = list[n/2].number;
+    worstTarget = list[0].number - 1;
+
     string outputFile = "binary_search_step_" + to_string(list.size()) + ".txt";
 
-    n = list.size();
-    bubbleSort(list);
-
-    
-    target = list[n/2].number;
+    logSteps.clear();
     auto start = chrono::high_resolution_clock::now();
-    binarySearch(list, target);
+    binarySearch(list, bestTarget);
     auto end = chrono::high_resolution_clock::now();
     auto bestTime = chrono::duration_cast<chrono::nanoseconds>(end - start);    
 
-    target = list[n - 1].number + 1;
+    logSteps.clear();
     start = chrono::high_resolution_clock::now();
-    binarySearch(list, target);
+    binarySearch(list, worstTarget);
     end = chrono::high_resolution_clock::now();
     auto worstTime = chrono::duration_cast<chrono::nanoseconds>(end - start);
 

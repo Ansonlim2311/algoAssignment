@@ -99,7 +99,7 @@ public class merge_sort {
 
         log = "";
         for (int i = 0; i < S.length; i++) {
-            log = log + S[i].number + "/" + S[i].text + "\n";
+            log = log + S[i].number + "," + S[i].text + "\n";
         }
         logSteps.add(log);
     }

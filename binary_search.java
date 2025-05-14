@@ -1,7 +1,9 @@
 import java.io.*;
 import java.util.*;
+import java.nio.file.*;
+import java.time.*;
 
-public class binary_search_step {
+public class binary_search {
     static List<String> logSteps = new ArrayList<>();
 
     static class RowData {
@@ -17,15 +19,11 @@ public class binary_search_step {
     }
 
     public static void main(String[] args) {
+        long start, end, bestTime, worstTime;
         Scanner scanner = new Scanner (System.in);
 
         System.out.print("Enter DataSet Filename: ");
         String fileName = scanner.nextLine();
-
-        System.out.print("Enter Target Value: ");
-        int targetValue = scanner.nextInt();
-
-        String outputFile = "binary_search_step_" + targetValue + ".txt";
 
         List<RowData> list = readCSV(fileName);
         if (list == null) {
@@ -34,9 +32,33 @@ public class binary_search_step {
             return;
         }
 
-        binarySearch(list, targetValue);
+        int n = list.size();
+        System.out.println(n);
+        int bestTarget = list.get((n / 2) - 1).number;
+        System.out.println(list.get(n/2).index);
+        System.out.println(bestTarget);
+        int worstTarget = list.get(0).number - 1;
+        System.out.println(worstTarget);
 
-        writeStepsToFile(outputFile);
+        String outputFile = "binary_search_step_" + list.size() + ".txt";
+
+        List<String> bestCaseSteps = new ArrayList<>(logSteps);
+
+        // Best case
+        logSteps.clear();
+        start = System.nanoTime();
+        binarySearch(list, bestTarget);
+        end = System.nanoTime();
+        bestTime = end - start;
+
+        // Worst case
+        logSteps.clear();
+        start = System.nanoTime();
+        binarySearch(list, worstTarget);
+        end = System.nanoTime();
+        worstTime = end - start;
+
+        writeStepsToFile(outputFile, bestTime, worstTime, bestCaseSteps);
         System.out.println("Binary search steps written to " + outputFile);
 
         scanner.close();
@@ -83,12 +105,20 @@ public class binary_search_step {
         }
     }
 
-    public static void writeStepsToFile(String outputFile) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
-            for (int i = 0; i < logSteps.size(); i++) {
-                bw.write(logSteps.get(i));
-                bw.newLine();
-            }
+    public static void writeStepsToFile(String outputFile, long bestTime, long worstTime, List<String> bestCaseSteps) {
+        try (PrintWriter bw = new PrintWriter(new FileWriter(outputFile))) {
+            bw.println("Best Time: " + bestTime + " ns");
+            bw.println("Worst Time: " + worstTime + " ns");
+            // bw.println();
+            // bw.println("Steps (worst case):");
+            // for (String step : logSteps) {
+            //     bw.println(step);
+            // }
+            // bw.println();
+            // bw.println("Best Case Steps:");
+            // for (String step : bestCaseSteps) {
+            //     bw.println(step);
+            // }
         } catch (IOException e) {
             System.err.println("Error writing output file: " + e.getMessage());
         }
