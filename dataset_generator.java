@@ -45,7 +45,7 @@ public class dataset_generator {
     }
 
     public static String generateRandomString(Random rand) {
-        int length = rand.nextInt(9) + 1;
+        int length = rand.nextInt(9) + 4;
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             char c = (char) ('a' + rand.nextInt(26));
