@@ -34,7 +34,10 @@ public class binary_search_step {
             return;
         }
 
-        binarySearch(list, targetValue);
+        boolean found = binarySearch(list, targetValue);
+        if (found == false) {
+            logSteps.add("-1");
+        }
 
         writeStepsToFile(outputFile);
         System.out.println("Binary search steps written to " + outputFile);
@@ -61,7 +64,7 @@ public class binary_search_step {
         return list;
     }
 
-    public static void binarySearch(List<RowData> list, int targetValue) {
+    public static boolean binarySearch(List<RowData> list, int targetValue) {
         int leftIndex = 0;
         int rightIndex = list.size() - 1;
 
@@ -72,7 +75,7 @@ public class binary_search_step {
             logSteps.add(midData.index + ":" + midData.number + "/" + midData.text);
 
             if (midData.number == targetValue) {
-                return;
+                return true;
             }
             else if (midData.number < targetValue) {
                 leftIndex = midIndex + 1;
@@ -81,6 +84,7 @@ public class binary_search_step {
                 rightIndex = midIndex - 1;
             }
         }
+        return false;
     }
 
     public static void writeStepsToFile(String outputFile) {

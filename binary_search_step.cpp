@@ -45,23 +45,7 @@ vector<RowData> readCSV(const string& filename) {
     return list;
 }
 
-// void bubbleSort(vector<RowData>& list) {
-//     int n = list.size();
-//     for (int i = 0; i < n - 1; i++) {
-//         for (int j = 0; j < n- i - 1; j++) {
-//             if (list.at(j).number > list.at(j + 1).number) {
-//                 RowData temp = list.at(j);
-//                 list.at(j) = list.at(j + 1);
-//                 list.at(j + 1) = temp;
-//             }
-//         }
-//         for (int i = 0; i < list.size(); i++) {
-//             list.at(i).index = i + 1;
-//         }
-//     }
-// }
-
-void binarySearch(vector<RowData> list, int targetValue) {
+bool binarySearch(vector<RowData> list, int targetValue) {
     int leftIndex = 0;
     int rightIndex = list.size() - 1;
     while (leftIndex <= rightIndex) {
@@ -71,7 +55,7 @@ void binarySearch(vector<RowData> list, int targetValue) {
         logSteps.push_back(to_string(midValue.index) + ":" + to_string(midValue.number) + "/" + midValue.text);
 
         if (midValue.number == targetValue) {
-            return;
+            return true;
         }
         else if (midValue.number < targetValue) {
             leftIndex = midIndex + 1;
@@ -80,6 +64,7 @@ void binarySearch(vector<RowData> list, int targetValue) {
             rightIndex = midIndex - 1;
         }
     }
+    return false;
 }
 
 void writeStepsToFile(const string& filename) {
@@ -111,8 +96,10 @@ int main() {
         throw runtime_error("Error: No data found in the file.");
     }
 
-    // bubbleSort(list);
-    binarySearch(list, targetVaule);
+    bool found = binarySearch(list, targetVaule);
+    if (found == false) {
+        logSteps.push_back("-1");
+    }
 
     writeStepsToFile(outputFile);
 
