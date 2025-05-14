@@ -1,2 +1,2 @@
-Best Time: 5940700 ns
-Worst Time: 23100 ns
+Best Time: 500 ns
+Worst Time: 2200 ns

@@ -1,7 +1,5 @@
 import java.io.*;
 import java.util.*;
-import java.nio.file.*;
-import java.time.*;
 
 public class binary_search {
     static List<String> logSteps = new ArrayList<>();
@@ -41,8 +39,10 @@ public class binary_search {
         System.out.println(worstTarget);
 
         String outputFile = "binary_search_step_" + list.size() + ".txt";
-
-        List<String> bestCaseSteps = new ArrayList<>(logSteps);
+        
+        for (int i = 0; i < 20; i++) {
+            binarySearch(list, bestTarget);
+        }
 
         // Best case
         logSteps.clear();
@@ -50,6 +50,8 @@ public class binary_search {
         binarySearch(list, bestTarget);
         end = System.nanoTime();
         bestTime = end - start;
+
+        List<String> bestCaseSteps = new ArrayList<>(logSteps);
 
         // Worst case
         logSteps.clear();
@@ -91,7 +93,7 @@ public class binary_search {
             int midIndex = (leftIndex + rightIndex) / 2;
             RowData midData = list.get(midIndex);
 
-            logSteps.add(midData.index + ":" + midData.number + "/" + midData.text);
+            // logSteps.add(midData.index + ":" + midData.number + "/" + midData.text);
 
             if (midData.number == targetValue) {
                 return;
