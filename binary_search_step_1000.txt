@@ -1,3 +1,3 @@
-Best Time: 700 ns
-Average Time: 2566 ns
-Worst Time: 4800 ns
+Best Time: 486 ns
+Average Time: 867 ns
+Worst Time: 1062 ns

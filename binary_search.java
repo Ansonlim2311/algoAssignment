@@ -18,7 +18,7 @@ public class binary_search {
 
     public static void main(String[] args) {
         long start, end, bestTime, worstTime, time;
-        long avgTime = 0;
+        long avgTime = 0, avgBestTime = 0, avgWorstTime = 0;
         Random rand = new Random();
         int randNum, target;
         Scanner scanner = new Scanner (System.in);
@@ -38,22 +38,26 @@ public class binary_search {
         int worstTarget = list.get(0).number - 1;
 
         String outputFile = "binary_search_step_" + list.size() + ".txt";
-        
-        for (int i = 0; i < 20; i++) {
+
+        for (int i = 0; i < n; i++) {  
+            start = System.nanoTime();
             binarySearch(list, bestTarget);
+            end = System.nanoTime();
+            bestTime = end - start;
+            avgBestTime = avgBestTime + bestTime;
         }
+        avgBestTime = avgBestTime / n;
 
-        start = System.nanoTime();
-        binarySearch(list, bestTarget);
-        end = System.nanoTime();
-        bestTime = end - start;
+        for (int i = 0; i < n; i++) {
+            start = System.nanoTime();
+            binarySearch(list, worstTarget);
+            end = System.nanoTime();
+            worstTime = end - start;
+            avgWorstTime = avgWorstTime + worstTime;
+        }
+        avgWorstTime = avgWorstTime / n;
 
-        start = System.nanoTime();
-        binarySearch(list, worstTarget);
-        end = System.nanoTime();
-        worstTime = end - start;
-
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < n; i++) {
             randNum = rand.nextInt(n);
             target = list.get(randNum).number;
             start = System.nanoTime();
@@ -62,9 +66,9 @@ public class binary_search {
             time = end - start;
             avgTime = avgTime + time;
         }
-        avgTime = avgTime / 100;
+        avgTime = avgTime / n;
 
-        writeStepsToFile(outputFile, bestTime, worstTime, avgTime);
+        writeStepsToFile(outputFile, avgBestTime, avgWorstTime, avgTime);
         System.out.println("Binary search steps written to " + outputFile);
 
         scanner.close();
