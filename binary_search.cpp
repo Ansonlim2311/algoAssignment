@@ -2,12 +2,11 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <stdexcept>
+#include <random>
 #include <chrono>
+#include <stdexcept>
 
 using namespace std;
-
-vector<string> logSteps;
 
 struct RowData {
     int number;
@@ -46,43 +45,41 @@ vector<RowData> readCSV(const string& filename) {
     return list;
 }
 
-void binarySearch(vector<RowData> list, int targetValue) {
+void binarySearch(const vector<RowData>& list, int targetValue) {
     int leftIndex = 0;
     int rightIndex = list.size() - 1;
+
     while (leftIndex <= rightIndex) {
         int midIndex = (leftIndex + rightIndex) / 2;
         RowData midValue = list[midIndex];
-
-        logSteps.push_back(to_string(midValue.index) + ":" + to_string(midValue.number) + "/" + midValue.text);
-
         if (midValue.number == targetValue) {
             return;
         }
         else if (midValue.number < targetValue) {
             leftIndex = midIndex + 1;
         }
-        else if (midValue.number > targetValue) {
+        else {
             rightIndex = midIndex - 1;
         }
-    }
+    }   
 }
 
-void writeStepsToFile(const string& filename, chrono::nanoseconds bestTime, chrono::nanoseconds worstTime) {
+void writeStepsToFile(const string& filename, long long bestTime, long long worstTime, long long avgTime) {
     ofstream file(filename);
     if (!file.is_open()) {
         throw runtime_error("Error writing to file: " + filename);
     }
 
-    file << "Best Time: " << bestTime.count() << " ns" << endl;
-    file << "Worst Time: " << worstTime.count() << " ns" << endl;
+    file << "Best Time: " << bestTime << " ns" << endl;
+    file << "Average Time: " << avgTime << " ns" << endl;
+    file << "Worst Time: " << worstTime << " ns" << endl;
 
     file.close();
 }
 
 int main() {
     string filename;
-    int bestTarget, worstTarget, n, midIndex;
-
+    srand(time(0));
     cout << "Enter dataset filename: ";
     cin >> filename;
 
@@ -91,28 +88,42 @@ int main() {
         throw runtime_error("Error: No data found in the file.");
     }
 
-    n = list.size();
+    int n = list.size();
+    int bestTarget = list[(n / 2) - 1].number;
+    int worstTarget = list[0].number - 1;
 
-    bestTarget = list[n/2].number;
-    worstTarget = list[0].number - 1;
+    long long bestTime = 0, worstTime = 0, avgTime = 0;
 
-    string outputFile = "binary_search_step_" + to_string(list.size()) + ".txt";
+    string outputFile = "binary_search_step_" + to_string(n) + ".txt";
 
-    logSteps.clear();
-    auto start = chrono::high_resolution_clock::now();
-    binarySearch(list, bestTarget);
-    auto end = chrono::high_resolution_clock::now();
-    auto bestTime = chrono::duration_cast<chrono::nanoseconds>(end - start);    
+    for (int i = 0; i < n; ++i) {
+        auto start = chrono::high_resolution_clock::now();
+        binarySearch(list, bestTarget);
+        auto end = chrono::high_resolution_clock::now();
+        bestTime += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    }
+    bestTime /= n;
 
-    logSteps.clear();
-    start = chrono::high_resolution_clock::now();
-    binarySearch(list, worstTarget);
-    end = chrono::high_resolution_clock::now();
-    auto worstTime = chrono::duration_cast<chrono::nanoseconds>(end - start);
+    for (int i = 0; i < n; ++i) {
+        auto start = chrono::high_resolution_clock::now();
+        binarySearch(list, worstTarget);
+        auto end = chrono::high_resolution_clock::now();
+        worstTime += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    }
+    worstTime /= n;
 
+    for (int i = 0; i < n; ++i) {
+        int randIndex = rand() % n;
+        int target = list[randIndex].number;
+        auto start = chrono::high_resolution_clock::now();
+        binarySearch(list, target);
+        auto end = chrono::high_resolution_clock::now();
+        avgTime += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    }
+    avgTime /= n;
 
-    writeStepsToFile(outputFile, bestTime, worstTime);
+    writeStepsToFile(outputFile, bestTime, worstTime, avgTime);
 
-    cout << "Binary search written to " << outputFile << endl;
+    cout << "Binary search steps written to " << outputFile << endl;
     return 0;
 }
