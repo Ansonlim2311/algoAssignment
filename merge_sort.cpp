@@ -1,53 +1,77 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
+#include <list>
 #include <string>
 #include <stdexcept>
-#include <list>
+
 
 using namespace std;
 
+struct RowData {
+    int number;
+    string text;
+
+    RowData(int n, const string& t) : number(n), text(t) {}
+};
+
 vector<string> logSteps;
 
-vector<int> readCSVRange(const string& filename, int start, int end) {
-    vector<int> numbers;
+vector<RowData> readCSVRange(const string& filename) {
+    vector<RowData> list;
     ifstream file(filename);
-    
     if (!file.is_open()) {
-        throw runtime_error("Error reading file: " + filename);
+        cerr << "Error reading file." << endl;
+        return {};
     }
 
     string line;
-    for (int row = 1; getline(file, line); row++) {
-        if (row < start) {
-            continue;
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string numStr, text;
+        if (getline(ss, numStr, ',') && getline(ss, text)) {
+            try {
+                int number = stoi(numStr);
+                list.emplace_back(number, text);
+            } catch (...) {
+                cerr << "Invalid line format: " << line << endl;
+            }
         }
-        if (row > end) { 
-            break;
-        }
-
-        numbers.push_back(stoi(line.substr(0, line.find(','))));
     }
+
     file.close();
-    return numbers;
+    return list;
 }
 
-void merge(vector<int>& S, int left, int mid, int right) {
-    list<int> L, R;
-    for (int i = left; i <= mid; i++) {
-        L.push_back(S[i]);
+void writeStepsToFile(const string& filename) {
+    ofstream out(filename);
+    if (!out.is_open()) {
+        cerr << "Error writing to file." << endl;
+        return;
     }
-    for (int i = mid + 1; i <= right; i++) {
-        R.push_back(S[i]);
+
+    if (!logSteps.empty()) {
+        out << logSteps.back(); // Write only the final sorted step
     }
+
+    out.close();
+}
+
+void merge(vector<RowData>& S, int left, int mid, int right) {
+    list<RowData> L, R;
+
+    for (int i = 0; i < mid - left + 1; ++i)
+        L.push_back(S[left + i]);
+    for (int j = 0; j < right - mid; ++j)
+        R.push_back(S[mid + 1 + j]);
 
     int k = left;
     while (!L.empty() && !R.empty()) {
-        if (L.front() <= R.front()) {
+        if (L.front().number <= R.front().number) {
             S[k++] = L.front();
             L.pop_front();
-        }
-        else {
+        } else {
             S[k++] = R.front();
             R.pop_front();
         }
@@ -57,19 +81,21 @@ void merge(vector<int>& S, int left, int mid, int right) {
         S[k++] = L.front();
         L.pop_front();
     }
+
     while (!R.empty()) {
         S[k++] = R.front();
         R.pop_front();
     }
 
-    string log = "Merged [" + to_string(left) + " to " + to_string(right) + "]: ";
-    for (int i = left; i <= right; i++) {
-        log = log + to_string(S[i]) + " ";
+    // Log current state
+    string log;
+    for (const auto& row : S) {
+        log += to_string(row.number) + "," + row.text + "\n";
     }
     logSteps.push_back(log);
 }
 
-void mergeSort(vector<int>& S, int left, int right) {
+void mergeSort(vector<RowData>& S, int left, int right) {
     if (left < right) {
         int mid = (left + right) / 2;
         mergeSort(S, left, mid);
@@ -78,73 +104,23 @@ void mergeSort(vector<int>& S, int left, int right) {
     }
 }
 
-void writeStepsToFile(const string& filename) {
-    ofstream file(filename);
-    if (!file.is_open()) {
-        throw runtime_error("Error writing to file: " + filename);
-    }
-
-    for (int i = 0; i < logSteps.size(); i++) {
-        file << logSteps[i] << + " " << endl;
-    }
-    file.close();
-}
-
-int getRowCount(const string& filename) {
-    ifstream file(filename);
-    if (!file.is_open()) {
-        throw runtime_error("Error opening file: " + filename);
-    }
-
-    string line;
-    int count = 0;
-    while (getline(file, line)) {
-        if (!line.empty()) {
-            count++;
-        }
-    }
-    file.close();
-    return count;
-}
-
 int main() {
-    string inputFile, log;
-    int startRow, endRow;
-
+    string inputFile;
     cout << "Enter dataset filename: ";
-    cin >> inputFile;
+    getline(cin, inputFile);
 
-    startRow = 1;
-    // cout << "Enter start row: ";
-    // cin >> startRow;
-
-    // cout << "Enter end row: ";
-    // cin >> endRow;
-    endRow = getRowCount(inputFile);
-
-    string outputFile = "merge_sort " + to_string(startRow) + "_" + to_string(endRow) + ".txt";
-
-    vector<int> numbers = readCSVRange(inputFile, startRow, endRow);
-    if (numbers.empty()) {
-        throw runtime_error("Error: The dataset is empty or could not be read.");
+    vector<RowData> data = readCSVRange(inputFile);
+    if (data.empty()) {
+        cerr << "Error: Unable to read dataset." << endl;
+        return 1;
     }
 
-    log = "Before MergeSort: ";
-    for (int i = 0; i < numbers.size(); i++) {
-        log = log + to_string(numbers[i]) + " ";
-    }
-    logSteps.push_back(log);
+    string outputFile = "merge_sort " + to_string(data.size()) + ".txt";
 
-    mergeSort(numbers, 0, numbers.size() - 1);
-
-    log = "After MergeSort: ";
-    for (int i = 0; i < numbers.size(); i++) {
-        log = log + to_string(numbers[i]) + " ";
-    }
-    logSteps.push_back(log);
-
+    mergeSort(data, 0, data.size() - 1);
     writeStepsToFile(outputFile);
 
     cout << "Merge sort steps written to " << outputFile << endl;
+
     return 0;
 }

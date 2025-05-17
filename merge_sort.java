@@ -27,7 +27,7 @@ public class merge_sort {
             return;
         }
 
-        String outputFile = "merge_sort_" + numbers.length + ".csv";
+        String outputFile = "merge_sort " + numbers.length + ".csv";
         
         mergeSort(numbers);
 
