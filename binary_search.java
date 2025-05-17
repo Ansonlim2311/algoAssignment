@@ -17,7 +17,10 @@ public class binary_search {
     }
 
     public static void main(String[] args) {
-        long start, end, bestTime, worstTime;
+        long start, end, bestTime, worstTime, time;
+        long avgTime = 0, avgBestTime = 0, avgWorstTime = 0;
+        Random rand = new Random();
+        int randNum, target;
         Scanner scanner = new Scanner (System.in);
 
         System.out.print("Enter DataSet Filename: ");
@@ -31,36 +34,41 @@ public class binary_search {
         }
 
         int n = list.size();
-        System.out.println(n);
-        int bestTarget = list.get((n / 2) - 1).number;
-        System.out.println(list.get(n/2).index);
-        System.out.println(bestTarget);
+        int bestTarget = list.get((n / 2) - 1).number; // -1 because array is 0 based index so if row1 is index 0 so n now is 500 so its row 499
         int worstTarget = list.get(0).number - 1;
-        System.out.println(worstTarget);
 
         String outputFile = "binary_search_step_" + list.size() + ".txt";
-        
-        for (int i = 0; i < 20; i++) {
+
+        for (int i = 0; i < n; i++) {  
+            start = System.nanoTime();
             binarySearch(list, bestTarget);
+            end = System.nanoTime();
+            bestTime = end - start;
+            avgBestTime = avgBestTime + bestTime;
         }
+        avgBestTime = avgBestTime / n;
 
-        // Best case
-        logSteps.clear();
-        start = System.nanoTime();
-        binarySearch(list, bestTarget);
-        end = System.nanoTime();
-        bestTime = end - start;
+        for (int i = 0; i < n; i++) {
+            start = System.nanoTime();
+            binarySearch(list, worstTarget);
+            end = System.nanoTime();
+            worstTime = end - start;
+            avgWorstTime = avgWorstTime + worstTime;
+        }
+        avgWorstTime = avgWorstTime / n;
 
-        List<String> bestCaseSteps = new ArrayList<>(logSteps);
+        for (int i = 0; i < n; i++) {
+            randNum = rand.nextInt(n);
+            target = list.get(randNum).number;
+            start = System.nanoTime();
+            binarySearch(list, target);
+            end = System.nanoTime();
+            time = end - start;
+            avgTime = avgTime + time;
+        }
+        avgTime = avgTime / n;
 
-        // Worst case
-        logSteps.clear();
-        start = System.nanoTime();
-        binarySearch(list, worstTarget);
-        end = System.nanoTime();
-        worstTime = end - start;
-
-        writeStepsToFile(outputFile, bestTime, worstTime, bestCaseSteps);
+        writeStepsToFile(outputFile, avgBestTime, avgWorstTime, avgTime);
         System.out.println("Binary search steps written to " + outputFile);
 
         scanner.close();
@@ -93,8 +101,6 @@ public class binary_search {
             int midIndex = (leftIndex + rightIndex) / 2;
             RowData midData = list.get(midIndex);
 
-            // logSteps.add(midData.index + ":" + midData.number + "/" + midData.text);
-
             if (midData.number == targetValue) {
                 return;
             }
@@ -107,20 +113,11 @@ public class binary_search {
         }
     }
 
-    public static void writeStepsToFile(String outputFile, long bestTime, long worstTime, List<String> bestCaseSteps) {
+    public static void writeStepsToFile(String outputFile, long bestTime, long worstTime, long avgTime) {
         try (PrintWriter bw = new PrintWriter(new FileWriter(outputFile))) {
             bw.println("Best Time: " + bestTime + " ns");
+            bw.println("Average Time: " + avgTime + " ns");
             bw.println("Worst Time: " + worstTime + " ns");
-            // bw.println();
-            // bw.println("Steps (worst case):");
-            // for (String step : logSteps) {
-            //     bw.println(step);
-            // }
-            // bw.println();
-            // bw.println("Best Case Steps:");
-            // for (String step : bestCaseSteps) {
-            //     bw.println(step);
-            // }
         } catch (IOException e) {
             System.err.println("Error writing output file: " + e.getMessage());
         }

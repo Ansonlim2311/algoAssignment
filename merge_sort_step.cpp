@@ -143,16 +143,6 @@ int main() {
 
     mergeSort(numbers, 0, numbers.size() - 1);
 
-    // log = "[";
-    // for (int i = 0; i < numbers.size(); i++) {
-    //     log = log + to_string(numbers[i].number) + "/" + numbers[i].text;
-    //     if (i < numbers.size() - 1) {
-    //         log += ", ";
-    //     }
-    // }
-    // log = log + "]";
-    // logSteps.push_back(log);
-
     writeStepsToFile(outputFile);
 
     cout << "Merge sort steps written to " << outputFile << endl;
