@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <vector>
 #include <string>
 #include <chrono>
@@ -39,14 +38,14 @@ int partition(vector<RowData>& S, int left, int right) {
     for (int i = 0; i < (int)L.size(); i++) {
         S[index++] = L[i];
     }
-    int pi = index;  // pivot index 
+    int pivotIndex = index;  // pivot index 
     for (int i = 0; i < (int)E.size(); i++) {
         S[index++] = E[i];
     }
     for (int i = 0; i < (int)G.size(); i++) {
         S[index++] = G[i];
     }
-    return pi;
+    return pivotIndex;
 }
 
 void quicksort(vector<RowData>& S, int left, int right) {
@@ -67,12 +66,15 @@ vector<RowData> readCSV(const string& filename) {
     }
     string line;
     while (getline(infile, line)) {
-        stringstream ss(line);
-        string numStr, text;
-        if (!getline(ss, numStr, ',')) continue;
-        if (!getline(ss, text)) text = "";
-        int number = stoi(numStr);
-        data.push_back(RowData(number, text));
+        string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
+        if (parts[0].empty() || parts[1].empty()) {
+            throw runtime_error("Error parsing line: " + line);
+        }
+        else {
+            int number = stoi(parts[0]);
+            string text = parts[1];
+            data.push_back(RowData(number, text));
+        }
     }
     infile.close();
     return data;
@@ -85,7 +87,7 @@ void writeCSV(const string& filename, const vector<RowData>& data) {
         cerr << "Error opening file for writing: " << filename << endl;
         return;
     }
-    for (int i = 0; i < (int)data.size(); i++) {
+    for (int i = 0; i < data.size(); i++) {
         outfile << data[i].number << "," << data[i].text << "\n";
     }
     outfile.close();
@@ -103,7 +105,7 @@ int main() {
     }
 
     auto start = high_resolution_clock::now();
-    quicksort(data, 0, (int)data.size() - 1);
+    quicksort(data, 0, data.size() - 1);
     auto end = high_resolution_clock::now();
 
     duration<double, milli> duration = end - start;
