@@ -5,6 +5,10 @@
 #include <list>
 #include <string>
 #include <stdexcept>
+#include <chrono>
+#include <iomanip>
+using namespace std;
+using namespace std::chrono; // For time measurement
 
 
 using namespace std;
@@ -117,10 +121,21 @@ int main() {
 
     string outputFile = "merge_sort " + to_string(data.size()) + ".txt";
 
+    // Start timing
+    auto start = high_resolution_clock::now();
+
+
     mergeSort(data, 0, data.size() - 1);
+
+       // End timing
+    auto end = high_resolution_clock::now();
+
+    // Calculate duration
+    auto duration = duration_cast<milliseconds>(end - start);
     writeStepsToFile(outputFile);
 
     cout << "Merge sort steps written to " << outputFile << endl;
+    cout << "Running time: " << duration.count() << " ms" << endl;
 
     return 0;
 }

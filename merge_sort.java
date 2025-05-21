@@ -27,9 +27,9 @@ public class merge_sort {
             return;
         }
 
-        String outputFile = "merge_sort " + numbers.length + ".csv";
-        
-        mergeSort(numbers);
+        String outputFile = "merge_sort_" + numbers.length + ".csv";
+
+        runAndTimeSort(numbers); // ✅ Call the correct method with timing
 
         writeStepsToFile(outputFile);
         System.out.println("Merge sort steps written to " + outputFile);
@@ -70,7 +70,6 @@ public class merge_sort {
     }
 
     public static void merge(RowData[] S, int left, int mid, int right) {
-        String log;
         LinkedList<RowData> L = new LinkedList<>();
         for (int i = 0; i < mid - left + 1; i++)
             L.add(S[left + i]);
@@ -97,20 +96,31 @@ public class merge_sort {
             S[k++] = R.removeFirst();
         }
 
-        log = "";
-        for (int i = 0; i < S.length; i++) {
-            log = log + S[i].number + "," + S[i].text + "\n";
+        // Log current state
+        StringBuilder log = new StringBuilder();
+        for (RowData row : S) {
+            log.append(row.number).append(",").append(row.text).append("\n");
         }
-        logSteps.add(log);
+        logSteps.add(log.toString());
     }
 
     public static void writeStepsToFile(String filename) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
             if (!logSteps.isEmpty()) {
-                bw.write(logSteps.get(logSteps.size() - 1));
+                bw.write(logSteps.get(logSteps.size() - 1)); // Only last step written
             }
         } catch (IOException e) {
             System.err.println("Error writing output file: " + e.getMessage());
         }
+    }
+
+    // ✅ Fixed method: correct name and usage
+    private static double runAndTimeSort(RowData[] data) {
+        long start = System.nanoTime();
+        mergeSort(data); // Correct method name
+        long end = System.nanoTime();
+        double duration = (end - start) / 1e6;  // convert to milliseconds
+        System.out.printf("Running time: %.3f ms%n", duration);
+        return duration;
     }
 }
