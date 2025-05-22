@@ -1,5 +1,5 @@
 Left With   (Good Luck guyssss!!!!!!) jiayouu !!
-1.merge_sort (c++) - jayy
+1.averge case for binary search
 
 Your tasks:
 1. Perform a comparative analysis on the following two sorting algorithms.
@@ -11,10 +11,6 @@ b. Quick-sort (last element as pivot)
 3. The analysis shall cover the following:
 a. Theoretical analysis and experiment study
 b. Time and space complexities
-
-4. Using a sorting or searching library is not allowed. Using a data structure that performs sorting internally is also not allowed, e.g. TreeSet, TreeMap, or
-PriorityQueue in Java. The safe data structures to use are array and list (array list or linked list), remember not to use their built-in sorting or searching
-function.
 
 6. For the experiment study:
 a. The running time captured should not include the time for I/O (reading input or printing output).

@@ -29,7 +29,7 @@ public class merge_sort {
 
         String outputFile = "merge_sort_" + numbers.length + ".csv";
 
-        runAndTimeSort(numbers); // ✅ Call the correct method with timing
+        runAndTimeSort(numbers);
 
         writeStepsToFile(outputFile);
         System.out.println("Merge sort steps written to " + outputFile);
@@ -114,7 +114,6 @@ public class merge_sort {
         }
     }
 
-    // ✅ Fixed method: correct name and usage
     private static double runAndTimeSort(RowData[] data) {
         long start = System.nanoTime();
         mergeSort(data); // Correct method name

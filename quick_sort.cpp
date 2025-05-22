@@ -60,9 +60,8 @@ void quicksort(vector<RowData>& S, int left, int right) {
 vector<RowData> readCSV(const string& filename) {
     vector<RowData> data;
     ifstream infile(filename);
-    if (!infile) {
-        cerr << "Error opening file: " << filename << endl;
-        return data;
+    if (!infile.is_open()) {
+        throw runtime_error("Error reading file: " + filename);
     }
     string line;
     while (getline(infile, line)) {
@@ -82,15 +81,14 @@ vector<RowData> readCSV(const string& filename) {
 
 // Write sorted data to CSV
 void writeCSV(const string& filename, const vector<RowData>& data) {
-    ofstream outfile(filename);
-    if (!outfile) {
-        cerr << "Error opening file for writing: " << filename << endl;
-        return;
+    ofstream outFile(filename);
+    if (!outFile.is_open()) {
+        throw runtime_error("Error writing to file: " + filename);
     }
     for (int i = 0; i < data.size(); i++) {
-        outfile << data[i].number << "," << data[i].text << "\n";
+        outFile << data[i].number << "," << data[i].text << "\n";
     }
-    outfile.close();
+    outFile.close();
 }
 
 int main() {
@@ -100,8 +98,7 @@ int main() {
 
     vector<RowData> data = readCSV(inputFile);
     if (data.empty()) {
-        cerr << "No data to sort or file error." << endl;
-        return 1;
+        throw runtime_error("Error: The dataset is empty or could not be read.");
     }
 
     auto start = high_resolution_clock::now();

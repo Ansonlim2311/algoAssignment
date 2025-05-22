@@ -26,24 +26,21 @@ vector<RowData> readCSVRange(const string& filename) {
     vector<RowData> list;
     ifstream file(filename);
     if (!file.is_open()) {
-        cerr << "Error reading file." << endl;
-        return {};
+        throw runtime_error("Error reading file: " + filename);
     }
 
     string line;
     while (getline(file, line)) {
-        stringstream ss(line);
-        string numStr, text;
-        if (getline(ss, numStr, ',') && getline(ss, text)) {
-            try {
-                int number = stoi(numStr);
-                list.emplace_back(number, text);
-            } catch (...) {
-                cerr << "Invalid line format: " << line << endl;
-            }
+        string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
+        if (parts[0].empty() || parts[1].empty()) {
+            throw runtime_error("Error parsing line: " + line);
+        }
+        else {
+            int number = stoi(parts[0]);
+            string text = parts[1];
+            list.push_back(RowData(number, text));
         }
     }
-
     file.close();
     return list;
 }
@@ -51,14 +48,12 @@ vector<RowData> readCSVRange(const string& filename) {
 void writeStepsToFile(const string& filename) {
     ofstream out(filename);
     if (!out.is_open()) {
-        cerr << "Error writing to file." << endl;
-        return;
+        throw runtime_error("Error writing to file: " + filename);
     }
 
     if (!logSteps.empty()) {
         out << logSteps.back(); // Write only the final sorted step
     }
-
     out.close();
 }
 
@@ -115,22 +110,17 @@ int main() {
 
     vector<RowData> data = readCSVRange(inputFile);
     if (data.empty()) {
-        cerr << "Error: Unable to read dataset." << endl;
-        return 1;
+        throw runtime_error("Error: The dataset is empty or could not be read.");
     }
 
-    string outputFile = "merge_sort " + to_string(data.size()) + ".txt";
+    string outputFile = "merge_sort " + to_string(data.size()) + ".csv";
 
-    // Start timing
     auto start = high_resolution_clock::now();
-
 
     mergeSort(data, 0, data.size() - 1);
 
-       // End timing
     auto end = high_resolution_clock::now();
 
-    // Calculate duration
     auto duration = duration_cast<milliseconds>(end - start);
     writeStepsToFile(outputFile);
 
