@@ -17,11 +17,10 @@ struct RowData {
     }
 };
 
-// Partition function 
 int partition(vector<RowData>& S, int left, int right) {
     vector<RowData> L,E,G;
 
-    int pivot = S[right].number;  // last element as pivot
+    int pivot = S[right].number;
 
     for (int i = left; i <= right; i++) {
         if (S[i].number < pivot) {
@@ -33,12 +32,11 @@ int partition(vector<RowData>& S, int left, int right) {
         }
     }
 
-    // Rebuild the vector S from L, E, G
     int index = left;
     for (int i = 0; i < (int)L.size(); i++) {
         S[index++] = L[i];
     }
-    int pivotIndex = index;  // pivot index 
+    int pivotIndex = index;
     for (int i = 0; i < (int)E.size(); i++) {
         S[index++] = E[i];
     }
@@ -56,7 +54,6 @@ void quicksort(vector<RowData>& S, int left, int right) {
     }
 }
 
-// Read CSV file into vector<RowData>
 vector<RowData> readCSV(const string& filename) {
     vector<RowData> data;
     ifstream infile(filename);
@@ -79,7 +76,6 @@ vector<RowData> readCSV(const string& filename) {
     return data;
 }
 
-// Write sorted data to CSV
 void writeCSV(const string& filename, const vector<RowData>& data) {
     ofstream outFile(filename);
     if (!outFile.is_open()) {
@@ -115,3 +111,7 @@ int main() {
 
     return 0;
 }
+
+// How To Run
+// g++ quick_sort.cpp -o quick_sort
+// ./quick_sort

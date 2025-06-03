@@ -8,7 +8,7 @@
 #include <chrono>
 #include <iomanip>
 using namespace std;
-using namespace std::chrono; // For time measurement
+using namespace std::chrono;
 
 
 using namespace std;
@@ -51,9 +51,6 @@ void writeStepsToFile(const string& filename, const vector<RowData>& data) {
         throw runtime_error("Error writing to file: " + filename);
     }
 
-    // if (!logSteps.empty()) {
-    //     out << logSteps.back(); // Write only the final sorted step
-    // }
     for (int i = 0; i < data.size(); ++i) {
         out << data[i].number << "," << data[i].text << "\n";
     }
@@ -88,13 +85,6 @@ void merge(vector<RowData>& S, int left, int mid, int right) {
         S[k++] = R.front();
         R.pop_front();
     }
-
-    // // Log current state
-    // string log;
-    // for (const auto& row : S) {
-    //     log += to_string(row.number) + "," + row.text + "\n";
-    // }
-    // logSteps.push_back(log);
 }
 
 void mergeSort(vector<RowData>& S, int left, int right) {
@@ -132,3 +122,8 @@ int main() {
 
     return 0;
 }
+
+
+// How To Run
+// g++ merge_sort.cpp -o merge_sort
+// ./merge_sort
