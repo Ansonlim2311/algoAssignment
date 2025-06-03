@@ -105,13 +105,13 @@ int main() {
     quicksort(data, 0, data.size() - 1);
     auto end = high_resolution_clock::now();
 
-    duration<double, milli> duration = end - start;
-    cout << "Running time: " << duration.count() << " ms" << endl;
+    auto duration = duration_cast<seconds>(end - start);
 
     string outputFile = "quick_sort_" + to_string(data.size()) + ".csv";
     writeCSV(outputFile, data);
 
     cout << "Sorted data saved to " << outputFile << endl;
+    cout << "Running time: " << duration.count() << " second" << endl;
 
     return 0;
 }

@@ -45,14 +45,17 @@ vector<RowData> readCSVRange(const string& filename) {
     return list;
 }
 
-void writeStepsToFile(const string& filename) {
+void writeStepsToFile(const string& filename, const vector<RowData>& data) {
     ofstream out(filename);
     if (!out.is_open()) {
         throw runtime_error("Error writing to file: " + filename);
     }
 
-    if (!logSteps.empty()) {
-        out << logSteps.back(); // Write only the final sorted step
+    // if (!logSteps.empty()) {
+    //     out << logSteps.back(); // Write only the final sorted step
+    // }
+    for (int i = 0; i < data.size(); ++i) {
+        out << data[i].number << "," << data[i].text << "\n";
     }
     out.close();
 }
@@ -86,12 +89,12 @@ void merge(vector<RowData>& S, int left, int mid, int right) {
         R.pop_front();
     }
 
-    // Log current state
-    string log;
-    for (const auto& row : S) {
-        log += to_string(row.number) + "," + row.text + "\n";
-    }
-    logSteps.push_back(log);
+    // // Log current state
+    // string log;
+    // for (const auto& row : S) {
+    //     log += to_string(row.number) + "," + row.text + "\n";
+    // }
+    // logSteps.push_back(log);
 }
 
 void mergeSort(vector<RowData>& S, int left, int right) {
@@ -121,11 +124,11 @@ int main() {
 
     auto end = high_resolution_clock::now();
 
-    auto duration = duration_cast<milliseconds>(end - start);
-    writeStepsToFile(outputFile);
+    auto duration = duration_cast<seconds>(end - start);
+    writeStepsToFile(outputFile, data);
 
     cout << "Merge sort steps written to " << outputFile << endl;
-    cout << "Running time: " << duration.count() << " ms" << endl;
+    cout << "Running time: " << duration.count() << " second" << endl;
 
     return 0;
 }
