@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 using namespace std;
+using namespace std::chrono;
 
 struct RowData {
     int number;
@@ -20,7 +21,7 @@ struct RowData {
     }
 };
 
-vector<RowData> readCSV(const string& filename) {
+vector<RowData> readCSV(string& filename) {
     vector<RowData> list;
     ifstream file(filename);
     
@@ -45,7 +46,7 @@ vector<RowData> readCSV(const string& filename) {
     return list;
 }
 
-void binarySearch(const vector<RowData>& list, int targetValue) {
+void binarySearch(vector<RowData>& list, int targetValue) {
     int leftIndex = 0;
     int rightIndex = list.size() - 1;
 
@@ -64,7 +65,7 @@ void binarySearch(const vector<RowData>& list, int targetValue) {
     }   
 }
 
-void writeStepsToFile(const string& filename, long long bestTime, long long worstTime, long long avgTime) {
+void writeStepsToFile(string& filename, long long bestTime, long long worstTime, long long avgTime) {
     ofstream file(filename);
     if (!file.is_open()) {
         throw runtime_error("Error writing to file: " + filename);
@@ -97,28 +98,28 @@ int main() {
     string outputFile = "binary_search_step_" + to_string(n) + ".txt";
 
     for (int i = 0; i < n; ++i) {
-        auto start = chrono::high_resolution_clock::now();
+        auto start = high_resolution_clock::now();
         binarySearch(list, bestTarget);
-        auto end = chrono::high_resolution_clock::now();
-        bestTime += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        auto end = high_resolution_clock::now();
+        bestTime += duration_cast<nanoseconds>(end - start).count();
     }
     bestTime /= n;
 
     for (int i = 0; i < n; ++i) {
-        auto start = chrono::high_resolution_clock::now();
+        auto start = high_resolution_clock::now();
         binarySearch(list, worstTarget);
-        auto end = chrono::high_resolution_clock::now();
-        worstTime += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        auto end = high_resolution_clock::now();
+        worstTime += duration_cast<nanoseconds>(end - start).count();
     }
     worstTime /= n;
 
     for (int i = 0; i < n; ++i) {
         int randIndex = rand() % n;
         int target = list[randIndex].number;
-        auto start = chrono::high_resolution_clock::now();
+        auto start = high_resolution_clock::now();
         binarySearch(list, target);
-        auto end = chrono::high_resolution_clock::now();
-        avgTime += chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+        auto end = high_resolution_clock::now();
+        avgTime += duration_cast<nanoseconds>(end - start).count();
     }
     avgTime /= n;
 

@@ -49,15 +49,6 @@ public class binary_search {
         avgBestTime = avgBestTime / n;
 
         for (int i = 0; i < n; i++) {
-            start = System.nanoTime();
-            binarySearch(list, worstTarget);
-            end = System.nanoTime();
-            worstTime = end - start;
-            avgWorstTime = avgWorstTime + worstTime;
-        }
-        avgWorstTime = avgWorstTime / n;
-
-        for (int i = 0; i < n; i++) {
             randNum = rand.nextInt(n);
             target = list.get(randNum).number;
             start = System.nanoTime();
@@ -67,6 +58,15 @@ public class binary_search {
             avgTime = avgTime + time;
         }
         avgTime = avgTime / n;
+
+        for (int i = 0; i < n; i++) {
+            start = System.nanoTime();
+            binarySearch(list, worstTarget);
+            end = System.nanoTime();
+            worstTime = end - start;
+            avgWorstTime = avgWorstTime + worstTime;
+        }
+        avgWorstTime = avgWorstTime / n;
 
         writeStepsToFile(outputFile, avgBestTime, avgWorstTime, avgTime);
         System.out.println("Binary search steps written to " + outputFile);
