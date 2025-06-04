@@ -2,7 +2,6 @@ import java.io.*;
 import java.util.*;
 
 public class merge_sort {
-    static List<String> logSteps = new ArrayList<>();
 
     public static class RowData {
         int number;
@@ -31,7 +30,7 @@ public class merge_sort {
 
         runAndTimeSort(numbers);
 
-        writeStepsToFile(outputFile);
+        writeStepsToFile(outputFile, numbers);
         System.out.println("Merge sort steps written to " + outputFile);
 
         scanner.close();
@@ -39,15 +38,17 @@ public class merge_sort {
 
     public static RowData[] readCSVRange(String filename) {
         List<RowData> list = new ArrayList<>();
+        int number;
+        String text;
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",", 2);
-                if (parts.length == 2) {
-                    int number = Integer.parseInt(parts[0].trim());
-                    String text = parts[1];
-                    list.add(new RowData(number, text));
-                }
+                // if (parts.length == 2) {
+                number = Integer.parseInt(parts[0].trim());
+                text = parts[1];
+                list.add(new RowData(number, text));
+                // }
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
@@ -95,19 +96,13 @@ public class merge_sort {
         while (!R.isEmpty()) {
             S[k++] = R.removeFirst();
         }
-
-        // Log current state
-        StringBuilder log = new StringBuilder();
-        for (RowData row : S) {
-            log.append(row.number).append(",").append(row.text).append("\n");
-        }
-        logSteps.add(log.toString());
     }
 
-    public static void writeStepsToFile(String filename) {
+    public static void writeStepsToFile(String filename, RowData[] data) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
-            if (!logSteps.isEmpty()) {
-                bw.write(logSteps.get(logSteps.size() - 1)); // Only last step written
+            for (int i = 0; i < data.length; i++) {
+                RowData row = data[i];
+                bw.write(row.number + "," + row.text + "\n");
             }
         } catch (IOException e) {
             System.err.println("Error writing output file: " + e.getMessage());
@@ -115,11 +110,13 @@ public class merge_sort {
     }
 
     private static double runAndTimeSort(RowData[] data) {
-        long start = System.nanoTime();
-        mergeSort(data); // Correct method name
-        long end = System.nanoTime();
-        double duration = (end - start) / 1e6;  // convert to milliseconds
-        System.out.printf("Running time: %.3f ms%n", duration);
+        long start, end;
+        double duration;
+        start = System.currentTimeMillis();
+        mergeSort(data);
+        end = System.currentTimeMillis();
+        duration = (end - start) / 1000;
+        System.out.printf("Running time: %.3f second%n", duration);
         return duration;
     }
 }

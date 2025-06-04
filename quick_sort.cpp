@@ -23,9 +23,10 @@ int partition(vector<RowData>& S, int left, int right) {
     int pivot = S[right].number;
 
     for (int i = left; i <= right; i++) {
-        if (S[i].number < pivot) {
+        int e = S[i].number ;
+        if (e < pivot) {
             L.push_back(S[i]);
-        } else if (S[i].number == pivot) {
+        } else if (e == pivot) {
             E.push_back(S[i]);
         } else {
             G.push_back(S[i]);
@@ -33,14 +34,14 @@ int partition(vector<RowData>& S, int left, int right) {
     }
 
     int index = left;
-    for (int i = 0; i < (int)L.size(); i++) {
+    for (int i = 0; i < L.size(); i++) {
         S[index++] = L[i];
     }
     int pivotIndex = index;
-    for (int i = 0; i < (int)E.size(); i++) {
+    for (int i = 0; i < E.size(); i++) {
         S[index++] = E[i];
     }
-    for (int i = 0; i < (int)G.size(); i++) {
+    for (int i = 0; i < G.size(); i++) {
         S[index++] = G[i];
     }
     return pivotIndex;
@@ -54,8 +55,10 @@ void quicksort(vector<RowData>& S, int left, int right) {
     }
 }
 
-vector<RowData> readCSV(const string& filename) {
+vector<RowData> readCSV(string& filename) {
     vector<RowData> data;
+    int number;
+    string text;
     ifstream infile(filename);
     if (!infile.is_open()) {
         throw runtime_error("Error reading file: " + filename);
@@ -63,22 +66,22 @@ vector<RowData> readCSV(const string& filename) {
     string line;
     while (getline(infile, line)) {
         string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
-        if (parts[0].empty() || parts[1].empty()) {
-            throw runtime_error("Error parsing line: " + line);
-        }
-        else {
-            int number = stoi(parts[0]);
-            string text = parts[1];
-            data.push_back(RowData(number, text));
-        }
+        // if (parts[0].empty() || parts[1].empty()) {
+        //     throw runtime_error("Error parsing line: " + line);
+        // }
+        // else {
+        number = stoi(parts[0]);
+        text = parts[1];
+        data.push_back(RowData(number, text));
+        // }
     }
     infile.close();
     return data;
 }
 
-void writeCSV(const string& filename, const vector<RowData>& data) {
+void writeCSV(string& filename, vector<RowData>& data) {
     ofstream outFile(filename);
-    if (!outFile.is_open()) {
+    if (outFile.is_open() == false) {
         throw runtime_error("Error writing to file: " + filename);
     }
     for (int i = 0; i < data.size(); i++) {

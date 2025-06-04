@@ -54,8 +54,10 @@ public class merge_sort_step {
         scanner.close();
     }
 
-    public static RowData[] readCSVRange(String filename, int start, int end) { //read range 
+    public static RowData[] readCSVRange(String filename, int start, int end) {
         List<RowData> list = new ArrayList<>();
+        int number;
+        String text;
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             for (int index = 1; (line = br.readLine()) != null; index++) {
@@ -66,11 +68,11 @@ public class merge_sort_step {
                     break;
                 }
                 String[] parts = line.split(",", 2);
-                if (parts.length == 2) {
-                    int number = Integer.parseInt(parts[0].trim());
-                    String text = parts[1];
-                    list.add(new RowData(number, text));
-                }
+                // if (parts.length == 2) {
+                number = Integer.parseInt(parts[0].trim());
+                text = parts[1];
+                list.add(new RowData(number, text));
+                // }
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());

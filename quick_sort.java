@@ -12,13 +12,11 @@ public class quick_sort {
         }
     }
 
-    // Partition function using ArrayLists
     private static int partition(RowData[] S, int left, int right) {
         List<RowData> L = new ArrayList<>();
         List<RowData> E = new ArrayList<>();
         List<RowData> G = new ArrayList<>();
-        // Choose last element as pivot
-        int pivot = S[right].number;  // Last element as pivot
+        int pivot = S[right].number;
 
         for (int i = left; i <= right; i++) {
             int e = S[i].number ;
@@ -30,12 +28,12 @@ public class quick_sort {
                 G.add(S[i]);
             }
         }
-        // Reconstruct S with L, E, G
+
         int index = left;
         for (int i = 0; i < L.size(); i++) {
             S[index++] = L.get(i);
         }
-        int pivotIndex = index;  // Start of pivot equals
+        int pivotIndex = index;
         for (int i = 0; i < E.size(); i++) {
             S[index++] = E.get(i);
         }
@@ -45,7 +43,6 @@ public class quick_sort {
         return pivotIndex;
     }
 
-    // QuickSort function
     private static void quicksort(RowData[] S, int left, int right) {
         if (left < right) {
             int pi = partition(S, left, right);
@@ -54,18 +51,19 @@ public class quick_sort {
         }
     }
 
-    // Read data from CSV
     private static RowData[] readCSV(String filename) {
         List<RowData> data = new ArrayList<>();
+        int number;
+        String text;
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",", 2);
-                if (parts.length == 2) {
-                    int number = Integer.parseInt(parts[0].trim());
-                    String text = parts[1];
-                    data.add(new RowData(number, text));
-                }
+                // if (parts.length == 2) {
+                number = Integer.parseInt(parts[0].trim());
+                text = parts[1];
+                data.add(new RowData(number, text));
+                // }
             }
         } catch (Exception e) {
             System.err.println("Error reading input file: " + e.getMessage());
@@ -73,10 +71,10 @@ public class quick_sort {
         return data.toArray(new RowData[0]);
     }
 
-    // Write sorted data to CSV
     private static void writeStepsToFile(String filename, RowData[] data) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
-            for (RowData rd : data) {
+            for (int i = 0; i < data.length; i++) {
+                RowData rd = data[i];
                 writer.write(rd.number + "," + rd.text + "\n");
             }
         } catch (Exception e) {
@@ -85,11 +83,13 @@ public class quick_sort {
     }
 
     private static double runAndTimeSort(RowData[] data) {
-        long start = System.nanoTime();
+        long start, end;
+        double duration;
+        start = System.currentTimeMillis();
         quicksort(data, 0, data.length - 1);
-        long end = System.nanoTime();
-        double duration = (end - start) / 1e6;  // convert to milliseconds
-        System.out.printf("Running time: %.3f ms%n", duration);
+        end = System.currentTimeMillis();
+        duration = (end - start) / 1000;
+        System.out.printf("Running time: %.3f second%n", duration);
         return duration;
     }
 
@@ -100,12 +100,9 @@ public class quick_sort {
         String inputFile = scanner.nextLine();
 
         RowData[] data = readCSV(inputFile);
-
-        // Run and time the sorting
-        runAndTimeSort(data);
-
-        // Write sorted output
         String outputFile = "quick_sort_" + data.length + ".csv";
+
+        runAndTimeSort(data);
         writeStepsToFile(outputFile, data);
 
         scanner.close();

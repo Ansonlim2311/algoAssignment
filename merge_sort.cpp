@@ -1,29 +1,28 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <vector>
 #include <list>
 #include <string>
 #include <stdexcept>
 #include <chrono>
-#include <iomanip>
+
 using namespace std;
 using namespace std::chrono;
-
-
-using namespace std;
 
 struct RowData {
     int number;
     string text;
 
-    RowData(int n, const string& t) : number(n), text(t) {}
+    RowData(int number, string text) {
+        this->number = number;
+        this->text = text;
+    }
 };
 
-vector<string> logSteps;
-
-vector<RowData> readCSVRange(const string& filename) {
+vector<RowData> readCSVRange(string& filename) {
     vector<RowData> list;
+    int number;
+    string text;
     ifstream file(filename);
     if (!file.is_open()) {
         throw runtime_error("Error reading file: " + filename);
@@ -32,20 +31,20 @@ vector<RowData> readCSVRange(const string& filename) {
     string line;
     while (getline(file, line)) {
         string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
-        if (parts[0].empty() || parts[1].empty()) {
-            throw runtime_error("Error parsing line: " + line);
-        }
-        else {
-            int number = stoi(parts[0]);
-            string text = parts[1];
-            list.push_back(RowData(number, text));
-        }
+        // if (parts[0].empty() || parts[1].empty()) {
+        //     throw runtime_error("Error parsing line: " + line);
+        // }
+        // else {
+        number = stoi(parts[0]);
+        text = parts[1];
+        list.push_back(RowData(number, text));
+        // }
     }
     file.close();
     return list;
 }
 
-void writeStepsToFile(const string& filename, const vector<RowData>& data) {
+void writeStepsToFile(string& filename, vector<RowData>& data) {
     ofstream out(filename);
     if (!out.is_open()) {
         throw runtime_error("Error writing to file: " + filename);
@@ -109,9 +108,7 @@ int main() {
     string outputFile = "merge_sort " + to_string(data.size()) + ".csv";
 
     auto start = high_resolution_clock::now();
-
     mergeSort(data, 0, data.size() - 1);
-
     auto end = high_resolution_clock::now();
 
     auto duration = duration_cast<seconds>(end - start);
@@ -122,7 +119,6 @@ int main() {
 
     return 0;
 }
-
 
 // How To Run
 // g++ merge_sort.cpp -o merge_sort

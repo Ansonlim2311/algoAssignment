@@ -19,8 +19,10 @@ struct RowData {
     }
 };
 
-vector<RowData> readCSVRange(const string& filename, int start, int end) {
+vector<RowData> readCSVRange(string& filename, int start, int end) {
     vector<RowData> numbers;
+    int number;
+    string text;
     ifstream file(filename);
     
     if (!file.is_open()) {
@@ -36,24 +38,23 @@ vector<RowData> readCSVRange(const string& filename, int start, int end) {
             break;
         }
         string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
-        if (parts[0].empty() || parts[1].empty()) {
-            throw runtime_error("Error parsing line: " + line);
-        }
-        else {
-            int number = stoi(parts[0]);
-            string text = parts[1];
-            numbers.push_back(RowData(number, text));
-        }
+        // if (parts[0].empty() || parts[1].empty()) {
+        //     throw runtime_error("Error parsing line: " + line);
+        // }
+        // else {
+        number = stoi(parts[0]);
+        text = parts[1];
+        numbers.push_back(RowData(number, text));
+        // }
     }
     file.close();
     return numbers;
 }
 
-// Partition method with 3-way partitioning
 int partition(vector<RowData>& S, int left, int right) {
     vector<RowData> L,E,G;
 
-    int pivot = S[right].number;  // Last element as pivot
+    int pivot = S[right].number;
 
     for (int i = left; i <= right; i++) {
         int e = S[i].number ;
@@ -66,24 +67,23 @@ int partition(vector<RowData>& S, int left, int right) {
         }
     }
 
-    // Reconstruct the list from L, E, G back into S
     int index = left;
     for (int i = 0; i < L.size(); i++) {
         S[index++] = L[i];
     }
-    int pivotIndex = index;  // Start of pivot equals
+    int pivotIndex = index;
     for (int i = 0; i < E.size(); i++) {
         S[index++] = E[i];
     }
     for (int i = 0; i < G.size(); i++) {
         S[index++] = G[i];
     }
-    return pivotIndex;  // Return the index of the pivot
+    return pivotIndex;
 }
 
 void quickSort(vector<RowData>& S, int left, int right) {
     if (left < right) {
-        int pi = partition(S, left, right); // Get pivot index after partitioning
+        int pi = partition(S, left, right);
         string log = "pi=" + to_string(pi) + " [";
         for (int i = 0; i < S.size(); i++) {
             log = log  + to_string(S[i].number) + "/" + S[i].text;
@@ -93,12 +93,12 @@ void quickSort(vector<RowData>& S, int left, int right) {
         }
         log = log + "]";
         logSteps.push_back(log);
-        quickSort(S, left, pi - 1);         // Sort left part
-        quickSort(S, pi + 1, right);        // Sort right part
+        quickSort(S, left, pi - 1);  
+        quickSort(S, pi + 1, right);       
     }
 }
 
-void writeStepsToFile(const string& filename) {
+void writeStepsToFile(string& filename) {
     ofstream file(filename);
     if (!file.is_open()) {
         throw runtime_error("Error writing to file: " + filename);

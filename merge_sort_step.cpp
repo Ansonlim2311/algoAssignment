@@ -19,8 +19,10 @@ struct RowData {
     }
 };
 
-vector<RowData> readCSVRange(const string& filename, int start, int end) {
+vector<RowData> readCSVRange(string& filename, int start, int end) {
     vector<RowData> numbers;
+    int number;
+    string text;
     ifstream file(filename);
     
     if (!file.is_open()) {
@@ -36,14 +38,14 @@ vector<RowData> readCSVRange(const string& filename, int start, int end) {
             break;
         }
         string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
-        if (parts[0].empty() || parts[1].empty()) {
-            throw runtime_error("Error parsing line: " + line);
-        }
-        else {
-            int number = stoi(parts[0]);
-            string text = parts[1];
-            numbers.push_back(RowData(number, text));
-        }
+        // if (parts[0].empty() || parts[1].empty()) {
+        //     throw runtime_error("Error parsing line: " + line);
+        // }
+        // else {
+        number = stoi(parts[0]);
+        text = parts[1];
+        numbers.push_back(RowData(number, text));
+        // }
     }
     file.close();
     return numbers;
@@ -99,7 +101,7 @@ void mergeSort(vector<RowData>& S, int left, int right) {
     }
 }
 
-void writeStepsToFile(const string& filename) {
+void writeStepsToFile(string& filename) {
     ofstream file(filename);
     if (!file.is_open()) {
         throw runtime_error("Error writing to file: " + filename);
