@@ -47,15 +47,17 @@ public class binary_search_step {
 
     public static List<RowData> readCSV(String fileName) {
         List<RowData> list = new ArrayList<>();
+        int number;
+        String text;
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             for (int index = 1; ((line = br.readLine()) != null); index++) {
                 String[] parts = line.split(",", 2);
-                if (parts.length == 2) {
-                    int number = Integer.parseInt(parts[0].trim());
-                    String text = parts[1];
-                    list.add(new RowData(number, text, index));
-                }
+                // if (parts.length == 2) {
+                number = Integer.parseInt(parts[0].trim());
+                text = parts[1];
+                list.add(new RowData(number, text, index));
+                // }
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());

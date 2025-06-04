@@ -22,6 +22,8 @@ struct RowData {
 
 vector<RowData> readCSV(const string& filename) {
     vector<RowData> list;
+    int number;
+    string text;
     ifstream file(filename);
     
     if (!file.is_open()) {
@@ -31,15 +33,15 @@ vector<RowData> readCSV(const string& filename) {
     string line;
     for (int index = 1; getline(file, line); index++) {
         string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)}; 
-        if (parts[0].empty() || parts[1].empty()) {
-            throw runtime_error("Error parsing line: " + line);
+        // if (parts[0].empty() || parts[1].empty()) {
+        //     throw runtime_error("Error parsing line: " + line);
 
-        }
-        else {
-            int number = stoi(parts[0]);
-            string text = parts[1];
-            list.push_back(RowData(number, text, index));
-        }
+        // }
+        // else {
+        number = stoi(parts[0]);
+        text = parts[1];
+        list.push_back(RowData(number, text, index));
+        // }
     }
     file.close();
     return list;
