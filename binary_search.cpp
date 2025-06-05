@@ -32,15 +32,15 @@ vector<RowData> readCSV(string& filename) {
     string line;
     for (int index = 1; getline(file, line); index++) {
         string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)}; 
-        if (parts[0].empty() || parts[1].empty()) {
-            throw runtime_error("Error parsing line: " + line);
+        // if (parts[0].empty() || parts[1].empty()) {
+        //     throw runtime_error("Error parsing line: " + line);
 
-        }
-        else {
-            int number = stoi(parts[0]);
-            string text = parts[1];
-            list.push_back(RowData(number, text, index));
-        }
+        // }
+        // else {
+        int number = stoi(parts[0]);
+        string text = parts[1];
+        list.push_back(RowData(number, text, index));
+        // }
     }
     file.close();
     return list;
@@ -65,7 +65,7 @@ void binarySearch(vector<RowData>& list, int targetValue) {
     }   
 }
 
-void writeStepsToFile(string& filename, long long bestTime, long long worstTime, long long avgTime) {
+void writeStepsToFile(string& filename, double bestTime, double worstTime, double avgTime) {
     ofstream file(filename);
     if (!file.is_open()) {
         throw runtime_error("Error writing to file: " + filename);
@@ -80,6 +80,9 @@ void writeStepsToFile(string& filename, long long bestTime, long long worstTime,
 
 int main() {
     string filename;
+    auto start = high_resolution_clock::now();
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<nanoseconds>(end - start);
     srand(time(0));
     cout << "Enter dataset filename: ";
     cin >> filename;
@@ -92,36 +95,36 @@ int main() {
     int n = list.size();
     int bestTarget = list[(n / 2) - 1].number;
     int worstTarget = list[0].number - 1;
+    int target = list[rand() % n].number;
 
-    long long bestTime = 0, worstTime = 0, avgTime = 0;
+    double bestTime, worstTime, avgTime;
 
     string outputFile = "binary_search_step_" + to_string(n) + ".txt";
 
+    start = high_resolution_clock::now();
     for (int i = 0; i < n; ++i) {
-        auto start = high_resolution_clock::now();
         binarySearch(list, bestTarget);
-        auto end = high_resolution_clock::now();
-        bestTime += duration_cast<nanoseconds>(end - start).count();
     }
-    bestTime /= n;
+    end = high_resolution_clock::now();
+    duration = duration_cast<nanoseconds>(end - start);
+    bestTime = duration.count() / n;
 
+    start = high_resolution_clock::now();
     for (int i = 0; i < n; ++i) {
-        auto start = high_resolution_clock::now();
         binarySearch(list, worstTarget);
-        auto end = high_resolution_clock::now();
-        worstTime += duration_cast<nanoseconds>(end - start).count();
     }
-    worstTime /= n;
+    end = high_resolution_clock::now();
+    duration = duration_cast<nanoseconds>(end - start);
+    worstTime = duration.count() / n;
 
+    start = high_resolution_clock::now();
     for (int i = 0; i < n; ++i) {
-        int randIndex = rand() % n;
-        int target = list[randIndex].number;
-        auto start = high_resolution_clock::now();
         binarySearch(list, target);
-        auto end = high_resolution_clock::now();
         avgTime += duration_cast<nanoseconds>(end - start).count();
     }
-    avgTime /= n;
+    end = high_resolution_clock::now();
+    duration = duration_cast<nanoseconds>(end - start);
+    avgTime = duration.count() / n;
 
     writeStepsToFile(outputFile, bestTime, worstTime, avgTime);
 

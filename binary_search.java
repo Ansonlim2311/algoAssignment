@@ -2,7 +2,6 @@ import java.io.*;
 import java.util.*;
 
 public class binary_search {
-    static List<String> logSteps = new ArrayList<>();
 
     static class RowData {
         int number;
@@ -18,9 +17,8 @@ public class binary_search {
 
     public static void main(String[] args) {
         long start, end, bestTime, worstTime, time;
-        long avgTime = 0, avgBestTime = 0, avgWorstTime = 0;
+        long avgTime, avgBestTime, avgWorstTime;
         Random rand = new Random();
-        int randNum, target;
         Scanner scanner = new Scanner (System.in);
 
         System.out.print("Enter DataSet Filename: ");
@@ -36,37 +34,34 @@ public class binary_search {
         int n = list.size();
         int bestTarget = list.get((n / 2) - 1).number; // -1 because array is 0 based index so if row1 is index 0 so n now is 500 so its row 499
         int worstTarget = list.get(0).number - 1;
+        int randNum = rand.nextInt(n);
+        int target = list.get(randNum).number;
 
         String outputFile = "binary_search_step_" + list.size() + ".txt";
 
+        start = System.nanoTime();
         for (int i = 0; i < n; i++) {  
-            start = System.nanoTime();
             binarySearch(list, bestTarget);
-            end = System.nanoTime();
-            bestTime = end - start;
-            avgBestTime = avgBestTime + bestTime;
         }
-        avgBestTime = avgBestTime / n;
+        end = System.nanoTime();
+        bestTime = end - start;
+        avgBestTime = bestTime / n;
 
+        start = System.nanoTime();
         for (int i = 0; i < n; i++) {
-            randNum = rand.nextInt(n);
-            target = list.get(randNum).number;
-            start = System.nanoTime();
             binarySearch(list, target);
-            end = System.nanoTime();
-            time = end - start;
-            avgTime = avgTime + time;
         }
-        avgTime = avgTime / n;
+        end = System.nanoTime();
+        time = end - start;
+        avgTime = time / n;
 
+        start = System.nanoTime();
         for (int i = 0; i < n; i++) {
-            start = System.nanoTime();
             binarySearch(list, worstTarget);
-            end = System.nanoTime();
-            worstTime = end - start;
-            avgWorstTime = avgWorstTime + worstTime;
         }
-        avgWorstTime = avgWorstTime / n;
+        end = System.nanoTime();
+        worstTime = end - start;
+        avgWorstTime = worstTime / n;
 
         writeStepsToFile(outputFile, avgBestTime, avgWorstTime, avgTime);
         System.out.println("Binary search steps written to " + outputFile);
@@ -76,15 +71,17 @@ public class binary_search {
 
     public static List<RowData> readCSV(String fileName) {
         List<RowData> list = new ArrayList<>();
+        int number;
+        String text;
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             for (int index = 1; ((line = br.readLine()) != null); index++) {
                 String[] parts = line.split(",", 2);
-                if (parts.length == 2) {
-                    int number = Integer.parseInt(parts[0].trim());
-                    String text = parts[1];
-                    list.add(new RowData(number, text, index));
-                }
+                // if (parts.length == 2) {
+                number = Integer.parseInt(parts[0].trim());
+                text = parts[1];
+                list.add(new RowData(number, text, index));
+                // }
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
