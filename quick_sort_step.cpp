@@ -101,7 +101,7 @@ void writeStepsToFile(string& filename) {
     }
 
     for (int i = 0; i < logSteps.size(); i++) {
-        file << logSteps[i] << + " " << endl;
+        file << logSteps[i] << endl;
     }
     file.close();
 }
