@@ -101,7 +101,7 @@ int main() {
         throw runtime_error("Error: The dataset is empty or could not be read.");
     }
 
-    string outputFile = "merge_sort " + to_string(data.size()) + "_.csv";
+    string outputFile = "merge_sort_" + to_string(data.size()) + ".csv";
 
     auto start = high_resolution_clock::now();
     mergeSort(data, 0, data.size() - 1);
