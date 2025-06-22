@@ -57,23 +57,20 @@ void quicksort(vector<RowData>& S, int left, int right) {
 
 vector<RowData> readCSV(string& filename) {
     vector<RowData> data;
-    int number;
-    string text;
+    int number, comma;
+    string text, line;
     ifstream infile(filename);
     if (!infile.is_open()) {
         throw runtime_error("Error reading file: " + filename);
     }
-    string line;
+    
     while (getline(infile, line)) {
-        string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
-        // if (parts[0].empty() || parts[1].empty()) {
-        //     throw runtime_error("Error parsing line: " + line);
-        // }
-        // else {
-        number = stoi(parts[0]);
-        text = parts[1];
-        data.push_back(RowData(number, text));
-        // }
+        comma = line.find(',');
+        if (comma != -1) {
+            number = stoi(line.substr(0, comma));
+            text = line.substr(comma + 1);
+            data.push_back(RowData(number, text));
+        }
     }
     infile.close();
     return data;
@@ -114,7 +111,3 @@ int main() {
 
     return 0;
 }
-
-// How To Run
-// g++ quick_sort.cpp -o quick_sort
-// ./quick_sort

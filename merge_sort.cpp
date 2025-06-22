@@ -21,24 +21,20 @@ struct RowData {
 
 vector<RowData> readCSVRange(string& filename) {
     vector<RowData> list;
-    int number;
-    string text;
+    int number, comma;
+    string text, line;
     ifstream file(filename);
     if (!file.is_open()) {
         throw runtime_error("Error reading file: " + filename);
     }
 
-    string line;
     while (getline(file, line)) {
-        string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
-        // if (parts[0].empty() || parts[1].empty()) {
-        //     throw runtime_error("Error parsing line: " + line);
-        // }
-        // else {
-        number = stoi(parts[0]);
-        text = parts[1];
-        list.push_back(RowData(number, text));
-        // }
+        comma = line.find(',');
+        if (comma != -1) {
+            number = stoi(line.substr(0, comma));
+            text = line.substr(comma + 1);
+            list.push_back(RowData(number, text));
+        }
     }
     file.close();
     return list;
@@ -105,7 +101,7 @@ int main() {
         throw runtime_error("Error: The dataset is empty or could not be read.");
     }
 
-    string outputFile = "merge_sort " + to_string(data.size()) + ".csv";
+    string outputFile = "merge_sort " + to_string(data.size()) + "_.csv";
 
     auto start = high_resolution_clock::now();
     mergeSort(data, 0, data.size() - 1);
@@ -119,7 +115,3 @@ int main() {
 
     return 0;
 }
-
-// How To Run
-// g++ merge_sort.cpp -o merge_sort
-// ./merge_sort

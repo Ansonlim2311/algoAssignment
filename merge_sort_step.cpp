@@ -21,15 +21,14 @@ struct RowData {
 
 vector<RowData> readCSVRange(string& filename, int start, int end) {
     vector<RowData> numbers;
-    int number;
-    string text;
+    int number, comma;
+    string text, line;
     ifstream file(filename);
     
     if (!file.is_open()) {
         throw runtime_error("Error reading file: " + filename);
     }
 
-    string line;
     for (int row = 1; getline(file, line); row++) {
         if (row < start) {
             continue;
@@ -37,15 +36,12 @@ vector<RowData> readCSVRange(string& filename, int start, int end) {
         if (row > end) { 
             break;
         }
-        string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)};
-        // if (parts[0].empty() || parts[1].empty()) {
-        //     throw runtime_error("Error parsing line: " + line);
-        // }
-        // else {
-        number = stoi(parts[0]);
-        text = parts[1];
-        numbers.push_back(RowData(number, text));
-        // }
+        comma  = line.find(',');
+        if (comma != -1) {
+            number = stoi(line.substr(0, comma));
+            text = line.substr(comma + 1);
+            numbers.push_back(RowData(number, text));
+        }
     }
     file.close();
     return numbers;

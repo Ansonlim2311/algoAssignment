@@ -48,17 +48,16 @@ public class binary_search_step {
     public static List<RowData> readCSV(String fileName) {
         List<RowData> list = new ArrayList<>();
         int number;
-        String text;
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String line;
+        String text, line;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
             for (int index = 1; ((line = br.readLine()) != null); index++) {
                 String[] parts = line.split(",", 2);
-                // if (parts.length == 2) {
                 number = Integer.parseInt(parts[0].trim());
                 text = parts[1];
                 list.add(new RowData(number, text, index));
-                // }
             }
+            br.close();
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
             return null;
@@ -90,11 +89,13 @@ public class binary_search_step {
     }
 
     public static void writeStepsToFile(String outputFile) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
             for (int i = 0; i < logSteps.size(); i++) {
                 bw.write(logSteps.get(i));
                 bw.newLine();
             }
+            bw.close();
         } catch (IOException e) {
             System.err.println("Error writing output file: " + e.getMessage());
         }

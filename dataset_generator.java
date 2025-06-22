@@ -21,8 +21,8 @@ public class dataset_generator {
 
     public static void generateDataset(String filename, int n) {
         Random rand = new Random();
-        Set<Integer> uniqueNumbers = new HashSet<>(n);
-        List<String> data = new ArrayList<>(n);
+        Set<Integer> uniqueNumbers = new HashSet<>();
+        List<String> data = new ArrayList<>();
 
         while (uniqueNumbers.size() < n) {
             int num = rand.nextInt(maxValue) + 1;
@@ -34,10 +34,12 @@ public class dataset_generator {
 
         Collections.shuffle(data);
 
-        try (FileWriter writer = new FileWriter(filename)) {
+        try {
+            FileWriter writer = new FileWriter(filename);
             for (String line : data) {
                 writer.write(line + "\n");
             }
+            writer.close();
             System.out.println("Dataset written to " + filename);
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
@@ -45,12 +47,13 @@ public class dataset_generator {
     }
 
     public static String generateRandomString(Random rand) {
-        int length = rand.nextInt(9) + 4;
-        StringBuilder sb = new StringBuilder(length);
+        int length = 4 + rand.nextInt(9);
+        String letters = "abcdefghijklmnopqrstuvwxyz";
+        String result = "";
+
         for (int i = 0; i < length; i++) {
-            char c = (char) ('a' + rand.nextInt(26));
-            sb.append(c);
+            result = result + letters.charAt(rand.nextInt(letters.length()));
         }
-        return sb.toString();
+        return result;
     }
 }
