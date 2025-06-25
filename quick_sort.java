@@ -54,17 +54,16 @@ public class quick_sort {
     private static RowData[] readCSV(String filename) {
         List<RowData> data = new ArrayList<>();
         int number;
-        String text;
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
+        String text, line;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",", 2);
-                // if (parts.length == 2) {
                 number = Integer.parseInt(parts[0].trim());
                 text = parts[1];
                 data.add(new RowData(number, text));
-                // }
             }
+            reader.close();
         } catch (Exception e) {
             System.err.println("Error reading input file: " + e.getMessage());
         }
@@ -72,11 +71,13 @@ public class quick_sort {
     }
 
     private static void writeStepsToFile(String filename, RowData[] data) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
             for (int i = 0; i < data.length; i++) {
                 RowData rd = data[i];
                 writer.write(rd.number + "," + rd.text + "\n");
             }
+            writer.close();
         } catch (Exception e) {
             System.err.println("Error writing output file: " + e.getMessage());
         }

@@ -24,23 +24,20 @@ struct RowData {
 vector<RowData> readCSV(string& filename) {
     vector<RowData> list;
     ifstream file(filename);
+    string text, line;
+    int number, comma;
     
     if (!file.is_open()) {
         throw runtime_error("Error reading file: " + filename);
     }
 
-    string line;
     for (int index = 1; getline(file, line); index++) {
-        string parts[] = {line.substr(0, line.find(',')), line.substr(line.find(',') + 1)}; 
-        // if (parts[0].empty() || parts[1].empty()) {
-        //     throw runtime_error("Error parsing line: " + line);
-
-        // }
-        // else {
-        int number = stoi(parts[0]);
-        string text = parts[1];
-        list.push_back(RowData(number, text, index));
-        // }
+        comma = line.find(',');
+        if (comma != -1) {
+            number = stoi(line.substr(0, comma));
+            text = line.substr(comma + 1);
+            list.push_back(RowData(number, text, index));
+        }
     }
     file.close();
     return list;

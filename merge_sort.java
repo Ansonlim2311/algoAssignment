@@ -39,17 +39,16 @@ public class merge_sort {
     public static RowData[] readCSVRange(String filename) {
         List<RowData> list = new ArrayList<>();
         int number;
-        String text;
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
+        String text, line;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(filename));
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",", 2);
-                // if (parts.length == 2) {
                 number = Integer.parseInt(parts[0].trim());
                 text = parts[1];
                 list.add(new RowData(number, text));
-                // }
             }
+            br.close();
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
             return null;
@@ -99,11 +98,13 @@ public class merge_sort {
     }
 
     public static void writeStepsToFile(String filename, RowData[] data) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
             for (int i = 0; i < data.length; i++) {
                 RowData row = data[i];
                 bw.write(row.number + "," + row.text + "\n");
             }
+            bw.close();
         } catch (IOException e) {
             System.err.println("Error writing output file: " + e.getMessage());
         }
